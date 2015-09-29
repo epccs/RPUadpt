@@ -1,6 +1,6 @@
-# Software experiments
+# RPUadpt Software
 
-RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it does have a few extra pins that match my Irrigate7 and PulseDAQ boards. RPUadpt has an ATTINY1634 that I will most likely need to be programmed with Atmel Studio but who knows, perhaps the Arduino IDE can work also. 
+RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it has a few extra pins that match my Irrigate7 and PulseDAQ boards. RPUadpt has an ATTINY1634 that I will most likely need to program with Atmel Studio but who knows, perhaps the Arduino IDE can work also. 
 
 First I just want to get things started with a simple blink program. That should ensure I've connected the ICSP pins correctly and get the fuse settings.
 
