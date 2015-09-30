@@ -1,5 +1,7 @@
 # RPUadpt Software
 
+From <https://github.com/epccs/RPUadpt>
+
 RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it has a few extra pins that match my Irrigate7 and PulseDAQ boards. RPUadpt has an ATTINY1634 that I will most likely need to program with Atmel Studio but who knows, perhaps the Arduino IDE can work also. 
 
 First I just want to get things started with a simple blink program. That should ensure I've connected the ICSP pins correctly and get the fuse settings.
@@ -21,7 +23,7 @@ I'm using an AVR Dragon and AtmelStudio 7, the dragon will detect the target vol
 
 ## TBD
 
-    It has been reported that ArduinoAsISP is working with the ATtiny1634 (not tested).
+It has been reported that ArduinoAsISP is working with the ATtiny1634 (not tested).
     
     add drazzy.com ATtiny boardmanager URL in Arduino IDE 
     with File>Preferances... Additional Boards Manager
@@ -31,8 +33,8 @@ I'm using an AVR Dragon and AtmelStudio 7, the dragon will detect the target vol
                                     Tools>B.O.D.:>B.O.D. Enabled (2.7V)
                                     Tools>Clock>8 MHz (internal)
     
-    I need I2C slave library, but what I found did not support the 1634 so I
-    am modifying it. [TinyWireS][tinywires]
+I need I2C slave library, but what I found did not support the 1634 so I 
+am modifying it. [TinyWireS][tinywires]
     
 [tinywires]: https://github.com/epccs/TinyWireS/
     
