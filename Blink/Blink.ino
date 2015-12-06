@@ -1,27 +1,27 @@
 /*
-  Blink
-  Turns on an LED on for one half second, then off for one 
-  half second, repeatedly.
+   Blink on RPUadpt /w ATtiny1634 using arduino-tiny-841 core
+   Turns on an LED on for one-tenth second, then off for nine-tenth
+   second, repeatedly.
 
-  RPUadpt has an LED you can control.
-
-  This example code is in the public domain.
+  RPUadpt has an LED on PA4 (pin 4 with arduino-tiny-841 core) that you can control.
+  The led is connected to 5V through a 1.5k (^1+) resistor. 
+  The pin has an ESD diode to its supply (3V3) and that plus the LED 
+  voltage keeps the LED off, however setting the pin as an output at 3V3 
+  does not turn off the LED since it is tied to 5V through the 1.5k resistor.
 
   modified 16 Nov 2015
   by Ronald Sutherland
  */
 
 
-// the setup function runs once when you press reset or power the board
 void setup() {
-  // initialize digital LED pin as an output.
-  pinMode(4, OUTPUT);
+  // LED pin is always low, it blinks by togling between INPUT and OUTPUT.
+  digitalWrite(4, LOW);
 }
 
-// the loop function runs over and over again forever
 void loop() {
-  digitalWrite(4, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(500);              // wait for a second
-  digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
-  delay(500);              // wait for a second
+  pinMode(4, OUTPUT);      // turn the LED on by sinking current
+  delay(100);              // wait for 1/10 second
+  pinMode(4, INPUT);       // turn the LED off by making pin high impedance
+  delay(900);              // wait for 9/10 second
 }
