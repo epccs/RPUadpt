@@ -9,6 +9,8 @@ With the Arduino IDE an ArduinoISP is used to program the ATiny1634 from an Uno 
 
 <http://epccs.org/indexes/Board/ICSP/>
 
+![](https://raw.githubusercontent.com/epccs/RPUadpt/master/14226^2_ICSPwithArduinoISP.jpg)
+
 With Atmel Studio 7 a Dragon is used, however the ArduinoISP also works when setup with External Tools. 
 
     Command: C:\Program Files (x86)\Arduino\hardware\tools\avr\bin\avrdude.exe
