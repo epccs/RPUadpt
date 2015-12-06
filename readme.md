@@ -3,7 +3,7 @@
 From <http://epccs.org/hg/open/RPUadpt/>
 Or <https://github.com/epccs/RPUadpt>
 
-RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it has a few extra pins that match my RPUno, Irrigate7 and PulseDAQ boards. RPUadpt has an ATiny1634 that working with to act as a bus manager. 
+RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it has a few extra pins that match my RPUno, Irrigate7 and PulseDAQ boards. RPUadpt has an ATiny1634 that will act as a bus manager. 
 
 With the Arduino IDE an ArduinoISP is used to program the ATiny1634 from an Uno at 5V through my ICSP (SPI) level converter board.
 
