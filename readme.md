@@ -7,7 +7,7 @@ RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it h
 
 With the Arduino ISP an ArduinoISP is used to program the ATiny1634 from an Uno at 5V through my ICSP (SPI) level converter board.
 
-    <http://epccs.org/indexes/Board/ICSP/>
+<http://epccs.org/indexes/Board/ICSP/>
 
 With Atmel Studio 7 a Dragon is used, however the ArduinoISP also works when setup with External Tools. 
 
@@ -19,15 +19,15 @@ With Atmel Studio 7 a Dragon is used, however the ArduinoISP also works when set
 
 The core for this board is in epccs-avr, info can be found in the boards.txt file. 
 
-    <http://epccs.org/hg/open/epccs-avr>
-    <https://github.com/epccs/epccs-avr>
+From <http://epccs.org/hg/open/epccs-avr>
+Or <https://github.com/epccs/epccs-avr>
 
 
 ## NOTES
 
 Github may not have the latest files.
     
-I need a I2C slave library, but what I found did not support the 1634 so I 
+I need an I2C slave library, but what I found did not support the 1634 so I 
 may try modifying it. [TinyWireS][tinywires]
     
 [tinywires]: https://github.com/epccs/TinyWireS/
