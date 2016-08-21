@@ -9,7 +9,6 @@
   avrdude arguments for ArduinoISP on AS7 as extern tool
    -F -v -pattiny1634 -cstk500v1 -e -PCOM3 -b19200 -D -Uflash:w:"$(BinDir)\$(TargetName).hex":i -C"E:/Program Files (x86)/Arduino/hardware/tools/avr/etc/avrdude.conf"
 
-  modified 16 Nov 2015
   by Ronald Sutherland
  */
  

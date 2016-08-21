@@ -1,36 +1,17 @@
+![EPCCS.ORG Logo](http://epccs.org/indexes/Document/Logo/Documents/HeaderName.jpg "EPCCS.ORG Logo")
 # RPUadpt Software
 
 From <http://epccs.org/hg/open/RPUadpt/>
-Or <https://github.com/epccs/RPUadpt>
 
-RPUadpt is a board I am working on that plugs into an Arduino Uno R3 pinout it has a few extra pins that match my RPUno, Irrigate7 and PulseDAQ boards. RPUadpt has an ATiny1634 that will act as a bus manager. 
+![Status](http://epccs.org/indexes/Board/RPUadpt/status_icon.png "RPUadpt Status")
 
-With the Arduino IDE an ArduinoISP is used to program the ATiny1634 from an Uno at 5V through my ICSP (SPI) level converter board.
+Shield used to connect a node to a RPU_BUS, which is multidrop full duplex RS-422 (RX and TX pairs) with an out of band half duplex RS-485 (DTR pair).
 
-<http://epccs.org/indexes/Board/ICSP/>
+![Schematic](http://epccs.org/indexes/Board/RPUadpt/Documents/14226,Schematic.png "RPUadpt Schematic")
 
-![](https://raw.githubusercontent.com/epccs/RPUadpt/master/14226^2_ICSPwithArduinoISP.jpg)
+[RPUadpt](http://epccs.org/indexes/Board/RPUadpt/) Board development and hardware.
 
-With Atmel Studio 7 a Dragon is used, however the ArduinoISP also works when setup with External Tools. 
+I am using Makefiles and am hopeful the files can be kept to a manageable size.
 
-    Command: C:\Program Files (x86)\Arduino\hardware\tools\avr\bin\avrdude.exe
-    Arguments: -F -v -pattiny1634 -cstk500v1 -e -PCOM3 -b19200 -D -Uflash:w:"$(BinDir)\$(TargetName).hex":i -C"C:/Program Files (x86)/Arduino/hardware/tools/avr/etc/avrdude.conf"
-    check_box for "Use Output window" selected 
-
-![](https://raw.githubusercontent.com/epccs/RPUadpt/master/14226^1_ICSPwithDragon.jpg)
-
-The core for this board is in epccs-avr, info can be found in the boards.txt file. 
-
-From <http://epccs.org/hg/open/epccs-avr>
-Or <https://github.com/epccs/epccs-avr>
-
-
-## NOTES
-
-Github may not have the latest files.
-    
-I need an I2C slave library, but what I found did not support the 1634 so I 
-may try modifying it. [TinyWireS][tinywires]
-    
-[tinywires]: https://github.com/epccs/TinyWireS/
+Makefile setup <http://epccs.org/indexes/Document/DvlpNotes/LinuxBoxCrossCompiler.html>
     

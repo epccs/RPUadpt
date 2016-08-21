@@ -7,8 +7,6 @@
 # ser.setRTS(True)    ser.getCTS()
 # ser.setDTR(True)    ser.getDSR()
 
-# note pyserial silently ignores DSR change on Windows 10-1511
-
 import serial  # pip install pyserial
 import _thread
 
