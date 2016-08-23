@@ -26,7 +26,6 @@ static unsigned long blink_started_at;
 
 int main(void)
 {
-	// RPUuno has no LED, but LED_BUILTIN is defined as pin 13 anyway.
     pinMode(LED_BUILTIN,OUTPUT);
 
     initTimers(); //Timer0 Fast PWM mode, Timer1 & Timer2 Phase Correct PWM mode.

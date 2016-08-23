@@ -30,9 +30,9 @@
 #define HOST_nRTS 3
 #define RX_nRE 4
 #define TX_DE 5
-#define TR_nRE 6
+#define DTR_nRE 6
 #define DTR_DE 7
-#define nDTR 8
+#define ICP1 8
 
 #define LED_BUILTIN 9
 

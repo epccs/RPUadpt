@@ -1,4 +1,4 @@
-/* ATmega328 DigitalIO Library
+/* RPUadpt DigitalIO Library
  * Copyright (C) 2016 Ronald Sutherland
  *
  * This Library is free software: you can redistribute it and/or modify
@@ -84,20 +84,20 @@ static inline __attribute__((always_inline)) void badPinCheck(uint8_t pin)
 }
 
 static inline __attribute__((always_inline))
-void BitWriteSafe(volatile uint8_t* register_addr, uint8_t bit_offset, bool value_for_bit) 
+void bitWrite(volatile uint8_t* register_addr, uint8_t bit_offset, bool value_for_bit) 
 {
-    uint8_t oldSREG;
-    if (register_addr > ((uint8_t*)0x5F)) {
-        oldSREG = SREG;
-        cli();
-    }
-    if (value_for_bit) {
-        *register_addr |= 1 << bit_offset;
-    } else {
-        *register_addr &= ~(1 << bit_offset);
-    }
-    if (register_addr > ((uint8_t*)0x5F)) {
-        SREG = oldSREG;
+    // Although I/O Registers 0x20 and 0x5F, e.g. PORTn and DDRn should not need 
+    // atomic change control it does not harm.
+    ATOMIC_BLOCK ( ATOMIC_RESTORESTATE )
+    {
+        if (value_for_bit) 
+        {
+            *register_addr |= 1 << bit_offset;
+        } 
+        else 
+        {
+            *register_addr &= ~(1 << bit_offset);
+        }
     }
 }
 
@@ -109,31 +109,29 @@ bool digitalRead(uint8_t pin_num)
     return (*pinMap[pin_num].pin >> pinMap[pin_num].bit) & 1;
 }
 
-/* toggle pin number  */
-static inline __attribute__((always_inline))
-void digitalToggle(uint8_t pin) {
-  badPinCheck(pin);
-  if ( pinMap[pin].pin > ((uint8_t*)0X5F) ) {
-    // must write bit to high address port
-    *pinMap[pin].pin = 1 << pinMap[pin].bit;
-  } else {
-    // will compile to sbi and PIN register will not be read.
-    *pinMap[pin].pin |= 1 << pinMap[pin].bit;
-  }
-}
-
 /* set pin value */
 static inline __attribute__((always_inline))
 void digitalWrite(uint8_t pin_num, bool value_for_bit) {
-  badPinCheck(pin_num);
-  BitWriteSafe(pinMap[pin_num].port, pinMap[pin_num].bit, value_for_bit);
+    badPinCheck(pin_num);
+    bitWrite(pinMap[pin_num].port, pinMap[pin_num].bit, value_for_bit);
+}
+
+/* toggle pin*/
+static inline __attribute__((always_inline))
+void digitalToggle(uint8_t pin) {
+    badPinCheck(pin);
+    // Ckeck if pin is in OUTPUT mode befor changing it
+    if( ( ( (*pinMap[pin].ddr) >> pinMap[pin].bit ) & 1) == OUTPUT )  
+    {
+        digitalWrite(pin, !digitalRead(pin));
+    }
 }
 
 /* set pin mode INPUT and OUTPUT */
 static inline __attribute__((always_inline))
 void pinMode(uint8_t pin_num, bool output_mode) {
-  badPinCheck(pin_num);
-  BitWriteSafe(pinMap[pin_num].ddr, pinMap[pin_num].bit, output_mode);
+    badPinCheck(pin_num);
+    bitWrite(pinMap[pin_num].ddr, pinMap[pin_num].bit, output_mode);
 }
 
 #endif  // DigitalPin_h
