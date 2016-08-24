@@ -55,6 +55,7 @@ int main(void)
     pinMode(LED_BUILTIN,OUTPUT);
     digitalWrite(LED_BUILTIN,LOW);
     
+    // set DTR transceiver (U4 on ^3)
     pinMode(DTR_TXD,OUTPUT);
     digitalWrite(DTR_TXD,LOW);
     pinMode(DTR_DE,OUTPUT);
@@ -62,6 +63,13 @@ int main(void)
     pinMode(DTR_nRE,OUTPUT);
     digitalWrite(DTR_nRE,LOW);
 
+    // set TX and RX transceiver U2 and U6 (on ^3)
+    pinMode(TX_DE,OUTPUT);
+    digitalWrite(TX_DE,HIGH);
+    pinMode(RX_DE,OUTPUT);
+    digitalWrite(RX_DE,HIGH);
+    // TX_nRE and RX_nRE have pull down R2 and R17 (on ^3)
+    
     initTimers(); //Timer0 Fast PWM mode, Timer1 & Timer2 Phase Correct PWM mode.
 
     sei(); // Enable global interrupts to start TIMER0
