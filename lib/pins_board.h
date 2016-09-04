@@ -36,7 +36,7 @@
 
 #define LED_BUILTIN 9
 
-#define SS 10
+#define nSS 10
 #define MOSI 11
 #define MISO 12
 #define SCK 13

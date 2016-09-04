@@ -1,11 +1,13 @@
-# CheckDTR Makefile is for learning
+# Remote for ATMega328 bus manager on RPUadpt board
 #
 # to see the implicit rules which automagicly turn blinkLED.c into blinkLED.o run
 # make -p
-TARGET = checkDTR
+TARGET = Remote
 LIBDIR = ../lib
 OBJECTS = main.o \
+	$(LIBDIR)/uart.o \
 	$(LIBDIR)/timers.o
+
 
 ## Chip and project-specific global definitions
 MCU   =  atmega328p
@@ -40,12 +42,14 @@ $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
 	rm -f $(TARGET).elf
 
+## http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega328p&LOW=FF&HIGH=DE&EXTENDED=05&LOCKBIT=2F
 ## stk500v1 is for Arduino as ISP (e.g. it is an example in the Arduino.cc IDE 1.6.7+)
 ## to reduce dupliction I only show the fuse setting in ../Bootloader
 
 ## 328p can lock the bootloader section, which is a good idea even if it is not used
 isp: $(TARGET).hex
 	avrdude -v -p $(MCU) -c stk500v1 -P $(ISP_PORT) -b 19200 -e -U flash:w:$(TARGET).hex -U lock:w:0x2f:m
+
 
 $(TARGET).elf: $(OBJECTS)
 	$(CC) $(LDFLAGS) $(TARGET_ARCH) $^ -o $@
