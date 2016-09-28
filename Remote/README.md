@@ -148,12 +148,12 @@ When DTR toggles on an RPUftdi its Host2Remote firmware will send an address byt
 
 The I2C address is 0x29 (dec 41). It is organized as an array of read or write commands. Note: the sent data is used to size the reply, so add an extra byte after the command to size the reply.
 
-0. reads this shields RPU_BUS addrss (default is '1', or from EE_PROM)
+0. reads this shields RPU_BUS addrss (default is '1') and activate normal mode.
 1. writes this shields RPU_BUS address to EE_PROM (not implemented)
 2. read the address sent when DTR/RTS toggles 
 3. write the address that will be sent when DTR/RTS toggles
 4. reads TBD (not implemented)
-5. wrtie normal RPU_BUS mode (send 0xFF on DTR pair) that will cancel lockout and connect all devices to the bus.
+5. activate normal mode which will cancel lockout and connect all devices to the bus.
 6. reads error status bits[0:DTR readback timeout, 1:twi transmit fail, 2:DTR readback not match]
 7. wrties (or clears) error status 
 
