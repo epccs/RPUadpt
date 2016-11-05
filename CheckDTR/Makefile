@@ -1,4 +1,4 @@
-# CheckDTR Makefile is for learning
+# CheckDTR Makefile
 #
 # to see the implicit rules which automagicly turn blinkLED.c into blinkLED.o run
 # make -p

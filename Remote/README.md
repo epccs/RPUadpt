@@ -14,7 +14,7 @@ When a byte on DTR does not match the RPU_ADDRESS it will cause the lockout cond
 
 For how I setup my Makefile toolchain <http://epccs.org/indexes/Document/DvlpNotes/LinuxBoxCrossCompiler.html>.
 
-With a ISP tool connection (set the ISP_PORT in Makefile) run 'make isp' and it should compile and then flash the MCU.
+With an ISP tool connected to the bus manager (set the ISP_PORT in Makefile) run 'make isp' and it should compile and then flash the bus manager.
 
 ```
 rsutherland@conversion:~/Samba/RPUadpt/Remote$ make isp
@@ -149,7 +149,7 @@ When DTR toggles an address byte is sent out over the DTR pair. If the address s
 
 The I2C address is 0x29 (dec 41). It is organized as an array of read or write commands. Note: the sent data is used to size the reply, so add an extra byte after the command to size the reply.
 
-0. read the shields RPU_BUS addrss and activate normal mode (and boadcast if not host_is_foreign).
+0. read the shields RPU_BUS addrss and activate normal mode (and boadcast if localhost_active).
 1. writes this shields RPU_BUS address (not implemented)
 2. read the address sent when DTR/RTS toggles 
 3. write the address that will be sent when DTR/RTS toggles

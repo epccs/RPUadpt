@@ -11,6 +11,8 @@ Shield used to connect a node to a RPU_BUS, which is multidrop full duplex RS-42
 
 [RPUadpt](http://epccs.org/indexes/Board/RPUadpt/) Board development and hardware.
 
+[Forum](http://rpubus.org/bb/viewforum.php?f=7).
+
 I am using Makefiles and am hopeful the files can be kept to a manageable size.
 
 Makefile setup <http://epccs.org/indexes/Document/DvlpNotes/LinuxBoxCrossCompiler.html>
