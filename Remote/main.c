@@ -40,7 +40,7 @@ static uint8_t rxBufferLength = 0;
 static uint8_t txBuffer[TWI_BUFFER_LENGTH];
 static uint8_t txBufferLength = 0;
 
-#define BOOTLOADER_ACTIVE 2000
+#define BOOTLOADER_ACTIVE 25000
 #define BLINK_BOOTLD_DELAY 75
 #define BLINK_ACTIVE_DELAY 500
 #define BLINK_LOCKOUT_DELAY 2000
@@ -133,17 +133,8 @@ void slaveTransmit(void)
 
 void connect_normal_mode(void)
 {
-    // connect both the local mcu and host/ftdi uart
-    if(!host_is_foreign)
-    {
-        digitalWrite(RX_DE, HIGH); // allow RX pair driver to enable if FTDI_TX is low
-        digitalWrite(RX_nRE, LOW);  // enable RX pair recevior to output to local MCU's RX input
-        digitalWrite(TX_DE, HIGH); // allow TX pair driver to enable if TX (from MCU) is low
-        digitalWrite(TX_nRE, LOW);  // enable TX pair recevior to output to FTDI_RX input
-    }
-
     // connect the local mcu if it has talked to the rpu manager (e.g. got an address)
-    else
+    if(host_is_foreign)
     {
         digitalWrite(RX_DE, LOW); // disallow RX pair driver to enable if FTDI_TX is low
         digitalWrite(RX_nRE, LOW);  // enable RX pair recevior to output to local MCU's RX input
@@ -156,6 +147,15 @@ void connect_normal_mode(void)
             digitalWrite(TX_DE, LOW); // disallow TX pair driver to enable if TX (from MCU) is low
         }
         digitalWrite(TX_nRE, HIGH);  // disable TX pair recevior to output to FTDI_RX input
+    }
+
+    // connect both the local mcu and host/ftdi uart 
+    else
+    {
+        digitalWrite(RX_DE, HIGH); // allow RX pair driver to enable if FTDI_TX is low
+        digitalWrite(RX_nRE, LOW);  // enable RX pair recevior to output to local MCU's RX input
+        digitalWrite(TX_DE, HIGH); // allow TX pair driver to enable if TX (from MCU) is low
+        digitalWrite(TX_nRE, LOW);  // enable TX pair recevior to output to FTDI_RX input
     }
 }
 
@@ -360,6 +360,9 @@ void check_lockout(void)
     }
 }
 
+/* The RPUadpt UART is connected to the DTR pair which is half duplex, 
+     but is self enabling when TX is pulled low.
+*/
 void check_uart(void)
 {
     unsigned long kRuntime = millis() - uart_started_at;

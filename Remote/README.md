@@ -145,6 +145,15 @@ This firmware is at Address '1' on the RPU_BUS, (not 0x1 but the ASCII value 0x3
 When DTR toggles an address byte is sent out over the DTR pair. If the address sent is '0' the local MCU will enter bootloader mode, and remain connected to the RPU_BUS, all other address will be locked out. After a period of time in lockout or when a normal mode byte is seen on the DTR pair, the local MCU is (re)connected to the bus. Only the node with an active host (e.g. not host_is_foreign) can broadcast the normal mode byte on the DTR pair, it will broadcast when the node reads the RPU_ADDRESS from the bus manger over I2C.
 
 
+## Bus Manager Modes
+
+In Normal Mode, the RPU bus manager connects the local MCU node to the RPU bus if it is RPU aware (e.g. ask for RPU address over I2C). Otherwise, it will not connect the local MCU's TX to the bus but does connect RX. The host will be connected unless it is foreign.
+
+In bootload mode, the RPU bus manager connects the local MCU node to the RPU bus. Also, the host will be connected unless it is foreign. It is expected that all other nodes are in lockout mode. Note the BOOTLOADER_ACTIVE delay is less than the LOCKOUT_DELAY, but it needs to be in bootload mode long enough to allow finishing. A slow bootloader will require longer delays.
+
+In lockout mode, if the host is foreign both the local MCU node and Host are disconnected from the bus, otherwise, the host remains connected.
+
+
 ## I2C/TWI Slave
 
 The I2C address is 0x29 (dec 41). It is organized as an array of read or write commands. Note: the sent data is used to size the reply, so add an extra byte after the command to size the reply.
@@ -206,4 +215,24 @@ Set normal mode to connect all devices to the RPU_BUS.
 {"txBuffer":[{"data":"0x5"},{"data":"0xFF"}]}
 /1/read? 2
 {"rxBuffer":[{"data":"0x5"},{"data":"0xFF"}]}
+``` 
+
+
+## Notes
+
+If the program using a serial device (e.g. avrdude) gets sent a SIGINT (Ctrl+C) it may not leave the UART device driver in the proper state (e.g. the DTR/RTS may remain active). One way to clear this is to use modprobe to remove and reload the device driver.
+
+``` 
+# Serial restart (list device drivers)
+lsmod | grep usbserial
+# ftdi uses the ftdi_sio driver
+# try to remove the driver
+sudo modprobe -r ftdi_sio
+# then load the driver again
+sudo modprobe ftdi_sio
+# the physcal UART chip will still have DTR/RTS active
+# but picocom can open and release it now to clear the
+# active lines.
+picocom -b 115200 /dev/ttyUSB0
+# C-a, C-x.
 ``` 

@@ -1,19 +1,16 @@
-![EPCCS.ORG Logo](http://epccs.org/indexes/Document/Logo/Documents/HeaderName.jpg "EPCCS.ORG Logo")
-# RPUadpt Software
+# RPUadpt shield for RS-422 over CAT5 with USB for a host
 
-From <http://epccs.org/hg/open/RPUadpt/>
+![Status](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/status_icon.png "Status")
 
-![Status](http://epccs.org/indexes/Board/RPUadpt/status_icon.png "RPUadpt Status")
+From <https://github.com/epccs/RPUadpt/>
 
-Shield used to connect a node to a RPU_BUS, which is multidrop full duplex RS-422 (RX and TX pairs) with an out of band half duplex RS-485 (DTR pair).
+Shield used to connect a MCU node to a RPU_BUS, which is a multi-drop full duplex RS-422 (RX and TX pairs) with an out of band half duplex RS-485 (DTR pair).
 
-![Schematic](http://epccs.org/indexes/Board/RPUadpt/Documents/14226,Schematic.png "RPUadpt Schematic")
+![Schematic](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/14226,Schematic.png "RPUadpt Schematic")
 
-[RPUadpt](http://epccs.org/indexes/Board/RPUadpt/) Board development and hardware.
+[HackADay](https://hackaday.io/project/17719-rpuadpt).
 
 [Forum](http://rpubus.org/bb/viewforum.php?f=7).
 
-I am using Makefiles and am hopeful the files can be kept to a manageable size.
-
-Makefile setup <http://epccs.org/indexes/Document/DvlpNotes/LinuxBoxCrossCompiler.html>
+The core files are in the /lib folder while each example has its own Makefile.
     
