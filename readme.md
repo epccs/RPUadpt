@@ -1,4 +1,4 @@
-# RPUadpt shield for RS-422 over CAT5 with USB for a host
+# RPUadpt shield for RS-422 over CAT5 
 
 ![Status](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/status_icon.png "Status")
 
