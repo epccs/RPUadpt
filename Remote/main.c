@@ -149,12 +149,19 @@ void connect_normal_mode(void)
         digitalWrite(TX_nRE, HIGH);  // disable TX pair recevior to output to FTDI_RX input
     }
 
-    // connect both the local mcu and host/ftdi uart 
+     // connect both the local mcu and host/ftdi uart if mcu is rpu aware, otherwise block MCU from using the TX pair
     else
     {
         digitalWrite(RX_DE, HIGH); // allow RX pair driver to enable if FTDI_TX is low
         digitalWrite(RX_nRE, LOW);  // enable RX pair recevior to output to local MCU's RX input
-        digitalWrite(TX_DE, HIGH); // allow TX pair driver to enable if TX (from MCU) is low
+        if(local_mcu_is_rpu_aware)
+        {
+            digitalWrite(TX_DE, HIGH); // allow TX pair driver to enable if TX (from MCU) is low
+        }
+        else
+        {
+            digitalWrite(TX_DE, LOW); // disallow TX pair driver to enable if TX (from MCU) is low
+        }
         digitalWrite(TX_nRE, LOW);  // enable TX pair recevior to output to FTDI_RX input
     }
 }
