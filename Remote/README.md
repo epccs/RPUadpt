@@ -43,7 +43,7 @@ In lockout mode, if the host is foreign both the local MCU node and Host are dis
 The I2C address is 0x29 (dec 41). It is organized as an array of read or write commands. Note: the sent data is used to size the reply, so add an extra byte after the command to size the reply.
 
 0. read the shields RPU_BUS addrss and activate normal mode (boadcast if localhost_active).
-1. writes this shields RPU_BUS address to eeprom (not implemented)
+1. set the shields RPU_BUS address and write it (and an id) to eeprom
 2. read the address sent when DTR/RTS toggles 
 3. write the address that will be sent when DTR/RTS toggles
 4. reads TBD (not implemented)
@@ -58,6 +58,9 @@ Connect to i2c-debug on an RPUno with an RPUftdi shield using picocom (or ilk).
 picocom -b 115200 /dev/ttyUSB0
 ``` 
 
+
+## Scan with i2c-debug 
+
 Scan for the I2C slave address of the RPUftdi shield and set the byte that is sent when DTR/RTS toggles ('1' is 0x31 or 49).
 
 ``` 
@@ -67,10 +70,33 @@ Scan for the I2C slave address of the RPUftdi shield and set the byte that is se
 {"scan":[{"addr":"0x29"}]}
 /0/address 41
 {"address":"0x29"}
-/0/buffer 3,49
-{"txBuffer":[{"data":"0x3"},{"data":"0x31"}]}
-/0/read? 2
-{"rxBuffer":[{"data":"0x3"},{"data":"0x31"}]}
+```
+
+## Read the RPUadpt shield address with i2c-debug
+
+The local RPU address can be read.
+
+``` 
+/1/address 41
+{"address":"0x29"}
+/1/buffer 0,255
+{"txBuffer":[{"data":"0x0"},{"data":"0xFF"}]}
+/1/read? 2
+{"rxBuffer":[{"data":"0x0"},{"data":"0x31"}]}
+``` 
+
+
+## Set the bootload address with i2c-debug
+
+Set the byte that is sent when DTR/RTS toggles ('2' is 0x32 or 50). Note RPUadpt has 3V3 logic inputs for a host.
+
+```
+/1/address 41
+{"address":"0x29"}
+/1/buffer 3,50
+{"txBuffer":[{"data":"0x3"},{"data":"0x32"}]}
+/1/read? 2
+{"rxBuffer":[{"data":"0x3"},{"data":"0x32"}]}
 ``` 
 
 exit picocom with C-a, C-x. 
@@ -81,24 +107,38 @@ Connect with picocom again.
 picocom -b 115200 /dev/ttyUSB0
 ``` 
 
-This will toggle DTR on the RPUftdi shield which should send 0x31 on the DTR pair. The RPUftdi shield should blink slow to indicate lockout, while the RPUadpt blinks normal to indicate bootloader mode. The lockout should timeout after a delay that can be adjusted in firmware (Host2Remote or Remote) as needed.
+This will toggle DTR on the RPUadpt shield which should send 0x32 on the DTR pair. The RPUadpt shield should blink slow to indicate lockout, while the shield with address '2' blinks fast to indicate bootloader mode. The lockout should timeout after LOCKOUT_DELAY that can be adjusted in firmware.
 
-Now connect to i2c-debug on an Irrigate7 with an RPUadpt shield. The local RPU address can be read.
+Now connect to i2c-debug on an RPUno with the shield that has address '2'. The RPUno can read the address.
 
 ``` 
-/1/buffer 0,255
+/2/address 41
+{"address":"0x29"}
+/2/buffer 0,255
 {"txBuffer":[{"data":"0x0"},{"data":"0xFF"}]}
-/1/read? 2
-{"rxBuffer":[{"data":"0x0"},{"data":"0x31"}]}
+/2/read? 2
+{"rxBuffer":[{"data":"0x0"},{"data":"0x32"}]}
 ``` 
 
-Set normal mode to connect all devices to the RPU_BUS.
+
+## Set RPU_BUS address with i2c-debug
+
+Using an RPUno and an RPUftdi shield, connect another RPUno with i2c-debug firmware to the RPUadpt shield that needs its address set. The default RPU_BUS address can be changed from '1' to any other value. 
 
 ``` 
-/1/buffer 5,255
-{"txBuffer":[{"data":"0x5"},{"data":"0xFF"}]}
+/1/address 41
+{"address":"0x29"}
+/1/buffer 1,50
+{"txBuffer":[{"data":"0x1"},{"data":"0x32"}]}
 /1/read? 2
-{"rxBuffer":[{"data":"0x5"},{"data":"0xFF"}]}
+{"rxBuffer":[{"data":"0x1"},{"data":"0x32"}]}
+``` 
+
+The example programs read the address durring setup, so they will need a reset.
+
+```
+/2/id?
+{"id":{"name":"I2Cdebug","desc":"RPUno Board /w atmega328p and LT3652","avr-gcc":"4.9"}}
 ``` 
 
 

@@ -16,6 +16,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/eeprom.h> 
+#include <avr/pgmspace.h>
 #include "../lib/timers.h"
 #include "../lib/twi.h"
 #include "../lib/uart.h"
@@ -35,6 +36,21 @@ http://www.gnu.org/licenses/gpl-2.0.html
 // disconnect and set error status on DTR pair
 #define RPU_ERROR_MODE 0xFF
 
+// If the ID is matched in EEPROM then the rpu_address is taken from EEPROM
+#define EE_RPU_IDMAX 10
+const uint8_t EE_IdTable[] PROGMEM =
+{
+    'R',
+    'P',
+    'U',
+    'a',
+    'd',
+    'p',
+    't',
+    '\0' // null term
+};
+#define EE_RPU_ID 40
+#define EE_RPU_ADDRESS 50
 
 static uint8_t rxBuffer[TWI_BUFFER_LENGTH];
 static uint8_t rxBufferLength = 0;
@@ -62,6 +78,8 @@ static uint8_t lockout_active;
 static uint8_t uart_has_TTL;
 static uint8_t host_is_foreign;
 static uint8_t local_mcu_is_rpu_aware;
+static uint8_t rpu_address;
+static uint8_t write_rpu_address_to_eeprom;
 
 volatile uint8_t error_status;
 volatile uint8_t uart_output;
@@ -86,7 +104,7 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
     {
         if ( (txBuffer[0] == 0) ) // TWI command to read RPU_ADDRESS
         {
-            txBuffer[1] = RPU_ADDRESS; // '1' is 0x31
+            txBuffer[1] = rpu_address; // '1' is 0x31
             local_mcu_is_rpu_aware =1;
             
             // end the local mcu lockout. 
@@ -112,6 +130,11 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
                     lockout_started_at = millis() - LOCKOUT_DELAY;
                     bootloader_started_at = millis() - BOOTLOADER_ACTIVE;
                 }
+        }
+        if ( (txBuffer[0] == 1) ) // set rpu_bus address and write it to eeprom
+        {
+            rpu_address = txBuffer[1];
+            write_rpu_address_to_eeprom = 1;
         }
         if ( (txBuffer[0] == 2) ) // read byte sent on DTR pair if HOST_nDTR toggles
         {
@@ -247,6 +270,7 @@ void setup(void)
     host_active = 0;
     lockout_active = 0;
     error_status = 0;
+    write_rpu_address_to_eeprom = 0;
 
     //Timer0 Fast PWM mode, Timer1 & Timer2 Phase Correct PWM mode.
     initTimers(); 
@@ -263,6 +287,35 @@ void setup(void)
     
     _delay_ms(50); // wait for UART glitch to clear
     digitalWrite(DTR_DE, HIGH);  // allow DTR pair driver to enable if DTR_TXD is low
+    
+    // check if eeprom ID is valid
+    uint8_t EE_id_valid;
+    for(uint8_t i = 0; i <EE_RPU_IDMAX; i++)
+    {
+        uint8_t id = pgm_read_byte(&EE_IdTable[i]);
+        uint8_t ee_id = eeprom_read_byte((uint8_t*)(i+EE_RPU_ID)); 
+        if (id != ee_id) 
+        {
+            EE_id_valid = 0;
+            break;
+        }
+        
+        if (id == '\0') 
+        {
+            EE_id_valid = 1;
+            break;
+        }
+    }
+
+    // Use eeprom value for rpu_address if ID was valid    
+    if ( EE_id_valid )
+    {
+        rpu_address = eeprom_read_byte((uint8_t*)(EE_RPU_ADDRESS));
+    }
+    else
+    {
+        rpu_address = RPU_ADDRESS;
+    }
     
     // is foreign host in control? (ask over the DTR pair)
     uart_has_TTL = 0;
@@ -420,7 +473,7 @@ void check_uart(void)
             digitalWrite(LED_BUILTIN, LOW);
             blink_started_at = millis();
         }
-        else if (input == RPU_ADDRESS) // that is my local address
+        else if (input == rpu_address) // that is my local address
         {
             connect_bootload_mode();
 
@@ -464,6 +517,35 @@ void check_uart(void)
     }
 }
 
+void save_rpu_addr_state(void)
+{
+    if (eeprom_is_ready())
+    {
+        // up to first EE_RPU_IDMAX states may be used for writhing an ID to the EEPROM
+        if ( (write_rpu_address_to_eeprom >= 1) && (write_rpu_address_to_eeprom <= EE_RPU_IDMAX) )
+        { // write "RPUadpt\0" at address EE_RPU_ID thru 4A
+            uint8_t value = pgm_read_byte(&EE_IdTable[write_rpu_address_to_eeprom-1]);
+            eeprom_write_byte( (uint8_t *)((write_rpu_address_to_eeprom-1)+EE_RPU_ID), value);
+            
+            if (value == '\0') 
+            {
+                write_rpu_address_to_eeprom = 11;
+            }
+            else
+            {
+                write_rpu_address_to_eeprom += 1;
+            }
+        }
+        
+        if ( (write_rpu_address_to_eeprom == 11) )
+        { // write the rpu address to eeprom address EE_RPU_ADDRESS 
+            uint8_t value = rpu_address;
+            eeprom_write_byte( (uint8_t *)(EE_RPU_ADDRESS), value);
+            write_rpu_address_to_eeprom = 0;
+        }
+    }
+}
+    
 int main(void)
 {
     setup();
@@ -477,6 +559,7 @@ int main(void)
         check_DTR();
         check_lockout();
         check_uart();
+        if(write_rpu_address_to_eeprom) save_rpu_addr_state();
     }    
 }
 
