@@ -20,3 +20,10 @@ Shield used to connect a MCU node to a RPU_BUS, which is a multi-drop full duple
 
 The core files are in the /lib folder while each example has its own Makefile.
     
+## AVR toolchain
+
+    * sudo apt-get install [gcc-avr](http://packages.ubuntu.com/search?keywords=gcc-avr)
+    * sudo apt-get install [binutils-avr](http://packages.ubuntu.com/search?keywords=binutils-avr)
+    * sudo apt-get install [gdb-avr](http://packages.ubuntu.com/search?keywords=gdb-avr)
+    * sudo apt-get install [avr-libc](http://packages.ubuntu.com/search?keywords=avr-libc)
+    * sudo apt-get install [avrdude](http://packages.ubuntu.com/search?keywords=avrdude)

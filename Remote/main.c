@@ -15,6 +15,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 
 #include <util/delay.h>
 #include <avr/io.h>
+#include <avr/eeprom.h> 
 #include "../lib/timers.h"
 #include "../lib/twi.h"
 #include "../lib/uart.h"
@@ -27,7 +28,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 #define RPU_ADDRESS '1'  
 // default address sent on DTR pair if FTDI_nDTR toggles
 #define RPU_HOST_CONNECT '0' 
-// byte sent on DTR pair when FTDI_nDTR is no longer active
+// byte broadcast on DTR pair when HOST_nDTR (or HOST_nRTS) is no longer active
 #define RPU_HOST_DISCONNECT ~RPU_HOST_CONNECT
 // return to normal mode address sent on DTR pair (haha... no it is not oFF it is a hex value)
 #define RPU_NORMAL_MODE 0x00
@@ -88,20 +89,29 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
             txBuffer[1] = RPU_ADDRESS; // '1' is 0x31
             local_mcu_is_rpu_aware =1;
             
-            // this ends the local mcu lockout. If the local host is active then broadcast, 
+            // end the local mcu lockout. 
             if (localhost_active) 
             {
-                // send a byte to the UART output
+                // If the local host is active then broadcast on DTR pair
                 uart_started_at = millis();
                 uart_output = RPU_NORMAL_MODE;
                 printf("%c", uart_output); 
                 uart_has_TTL = 1; // causes host_is_foreign to be false
             }
-            else
-            {
-                lockout_started_at = millis() - LOCKOUT_DELAY;
-                bootloader_started_at = millis() - BOOTLOADER_ACTIVE;
-            }
+            else 
+                if (bootloader_started)
+                {
+                    // If the bootloader_started has not timed out yet broadcast on DTR pair
+                    uart_started_at = millis();
+                    uart_output = RPU_NORMAL_MODE;
+                    printf("%c", uart_output); 
+                    uart_has_TTL = 0; // causes host_is_foreign to be true, so local DTR/RTS is not accepted
+                } 
+                else
+                {
+                    lockout_started_at = millis() - LOCKOUT_DELAY;
+                    bootloader_started_at = millis() - BOOTLOADER_ACTIVE;
+                }
         }
         if ( (txBuffer[0] == 2) ) // read byte sent on DTR pair if HOST_nDTR toggles
         {
@@ -393,7 +403,14 @@ void check_uart(void)
         }
         else
         {
-            host_is_foreign = 1;
+            if (localhost_active)
+            {
+                host_is_foreign = 0; // used to connect the host
+            }
+            else
+            {
+                host_is_foreign = 1; // used to lockout the host
+            }
         }
 
         if (input == RPU_NORMAL_MODE) // end the lockout or bootloader if it was set.
