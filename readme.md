@@ -1,29 +1,48 @@
-# RPUadpt shield for RS-422 over CAT5 
-
-![Status](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/status_icon.png "Status")
+# RPUadpt
 
 From <https://github.com/epccs/RPUadpt/>
 
 ## Overview
 
-Shield used to connect a MCU node to a RPU_BUS, which is a multi-drop full duplex RS-422 (RX and TX pairs) with an out of band half duplex RS-485 (DTR pair).
+Shield for full duplex RS-422 (RX and TX pairs) and an out of band half duplex RS-485 (DTR pair) over CAT5. Its a multidrop bus between a host (e.g. Pi Zero on [RPUpi] or desktop with [RPUftdi]) and an MCU board (e.g. [RPUno]).
 
-![Schematic](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/14226,Schematic.png "RPUadpt Schematic")
+[HackADay](https://hackaday.io/project/17719-rpuadpt)
 
-![Bottom](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/14226,Bottom.png "RPUadpt Board Bottom")
+[Forum](http://rpubus.org/bb/viewforum.php?f=7)
 
-![Top](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/14226,Top.png "RPUadpt Board Top")
+[OSHpark](https://oshpark.com/shared_projects/E8B1i7ss)
 
-[HackADay](https://hackaday.io/project/17719-rpuadpt).
+[RPUno]: https://github.com/epccs/RPUno
+[RPUpi]: https://github.com/epccs/RPUpi
+[RPUftdi]: https://github.com/epccs/RPUftdi
 
-[Forum](http://rpubus.org/bb/viewforum.php?f=7).
+## Status
 
-The core files are in the /lib folder while each example has its own Makefile.
-    
+![Status](./Hardware/status_icon.png "Status")
+
+
+## [Hardware](./Hardware)
+
+Hardware files are in Eagle, there is also some testing, evaluation, and schooling notes for referance.
+
+
+## Example
+
+A Host computer (e.g. Pi Zero on [RPUpi] or desktop with [RPUftdi]) issues commands to the RPU_BUS microcontrollers over a serial (UART) interface. The microcontrollers run a command processor that accepts interactive textual commands that operate the microcontroller peripherals as a bare metal system. This means the microcontroller can perform event capture task for a flow meter or control an array of half-bridge power outputs to run a BLDC water pump. 
+
+![MultiDrop](./Hardware/Documents/MultiDrop.png "MultiDrop")
+
+
 ## AVR toolchain
 
-    * sudo apt-get install [gcc-avr](http://packages.ubuntu.com/search?keywords=gcc-avr)
-    * sudo apt-get install [binutils-avr](http://packages.ubuntu.com/search?keywords=binutils-avr)
-    * sudo apt-get install [gdb-avr](http://packages.ubuntu.com/search?keywords=gdb-avr)
-    * sudo apt-get install [avr-libc](http://packages.ubuntu.com/search?keywords=avr-libc)
-    * sudo apt-get install [avrdude](http://packages.ubuntu.com/search?keywords=avrdude)
+* sudo apt-get install [gcc-avr]
+* sudo apt-get install [binutils-avr]
+* sudo apt-get install [gdb-avr]
+* sudo apt-get install [avr-libc]
+* sudo apt-get install [avrdude]
+    
+[gcc-avr]: http://packages.ubuntu.com/search?keywords=gcc-avr
+[binutils-avr]: http://packages.ubuntu.com/search?keywords=binutils-avr
+[gdb-avr]: http://packages.ubuntu.com/search?keywords=gdb-avr
+[avr-libc]: http://packages.ubuntu.com/search?keywords=avr-libc
+[avrdude]: http://packages.ubuntu.com/search?keywords=avrdude[avrdude](http://packages.ubuntu.com/search?keywords=avrdude)

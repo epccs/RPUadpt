@@ -1,6 +1,6 @@
 # Remote
 
-This bus manager firmware is for an RPUadpt board, it will watch for a byte matching the local RPU_ADDRESS on the DTR pair and when seen reset the local MCU board (e.g. an RPUadpt on Irrigate7) which places it in bootloader mode. If a non-matching byte is seen the MCU is locked out from the RX and TX pair and no reset occures.
+This bus manager firmware is for an RPUadpt board, it will watch for a byte matching the local RPU_ADDRESS on the DTR pair and when seen reset the local MCU board which places it in bootloader mode. If a non-matching byte is seen the MCU is locked out from the RX and TX pair and no reset occures.
 
 ## Overview
 
@@ -46,8 +46,8 @@ The I2C address is 0x29 (dec 41). It is organized as an array of read or write c
 1. set the shields RPU_BUS address and write it (and an id) to eeprom
 2. read the address sent when DTR/RTS toggles 
 3. write the address that will be sent when DTR/RTS toggles
-4. reads TBD (not implemented)
-5. write TBD (not implemented)
+4. read RPUpi shutdown (the ICP1 pin has a weak pull up and a momentary switch)
+5. set RPUpi shutdown (pull down ICP1 for a few seconds to cause computer to hault)
 6. reads error status bits[0:DTR readback timeout, 1:twi transmit fail, 2:DTR readback not match]
 7. wrties (or clears) error status 
 
@@ -61,7 +61,7 @@ picocom -b 115200 /dev/ttyUSB0
 
 ## Scan with i2c-debug 
 
-Scan for the I2C slave address of the RPUftdi shield and set the byte that is sent when DTR/RTS toggles ('1' is 0x31 or 49).
+Scan for the I2C slave address of the RPUftdi shield and address I2C.
 
 ``` 
 /0/id?

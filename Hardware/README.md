@@ -2,25 +2,110 @@
 
 ## Overview
 
-Eagle Files, BOM, Status, and how to Test.
+This board connects a [RPUno] to a multi-drop serial bus.
 
-![Schematic](https://raw.githubusercontent.com/epccs/RPUadpt/master/Hardware/14226,Schematic.png "RPUadpt Schematic")
+[RPUno]: https://github.com/epccs/RPUno
 
-# Notes
+## Inputs/Outputs/Functions
 
 ```
-Full Duplex RS-422 multi-drop RX and TX pairs.
-Half Duplx RS-485 out of band management (DTR) pair.
-Fail Safe state (high) when differential line is undriven.
-Resting state of differential pair (RX, TX and DTR) is undriven.
-Fits RPUno, Irrigate7, and PulseDAQ boards.
-May also fit other Arduino compatible boards.
-Power is taken from +5V of the MCU node board.
-HOST may connect to the FTDI Friend pinout (3V3 logic).
-I2C Interface between BUS manager and MCU node.  
-BUS manager MCU type: ATmega328p
-BUS manager MCU clock: 8MHz internal
-BUS manager MCU Voltage: 3.3V (e.g. IOREF is 5V)
+        TWI/I2C RPU_BUS manager interface.
+        Full Duplex RS-422, multi-drop for [RPUno] RX and TX
+        Half Duplex RS-485, multi-drop bus management (e.g. bootloader mode)
+        Resting state from RX or TX UART causes as an undriven differential line
+        Fail Safe state occurs when differential line is not driven
+        Fits RPUno, Irrigate7, and PulseDAQ boards
+        May also fit other Arduino Uno R3 compatible pinout.
+        Power is taken from +5V of the MCU board on ^4.
+        FTDI Friend pinout with 3V3 logic level for the host.
 ```
 
-The manager can (with proper programming, and perhaps out of band instructions) lock the MCU node (and/or the HOST) from using the RX or TX lines.   
+## Uses
+
+```
+        Wired multi-drop serial communication between bare metal and a host.
+        Daisy chain multiple AVR MCU's to a host computer in a way that allows avrdude to upload firmware.
+```
+
+## Notice
+
+If the host computer exposes the serial port to the network then security is effectively compromised. 
+
+
+# Table Of Contents
+
+1. [Status](#status)
+2. [Design](#design)
+3. [Bill of Materials](#bill-of-materials)
+4. [How To Use](#how-to-use) 
+
+
+# Status
+
+![Status](./status_icon.png "RPUadpt Status")
+
+```
+        ^5  Done: 
+            WIP: 
+            Todo: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing, Evaluation.
+            *during review the Design may change without changing the revision.
+            Connect bus manager ICP1 pin to a test point rather than DTR.
+
+        ^4 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
+            WIP: Evaluation 
+            Todo: 
+            *during review the Design may change without changing the revision.
+            Notes: HOST_TX has a 10k pull-up now. Pinout for a FTDI Friend 
+                which may supply power through D1 if the node is not powered.
+                +5V power is used from the node board (which should have a SMPS 
+                to convert VIN into +5V).
+```
+
+Debugging and fixing problems i.e. [Schooling](./Schooling/)
+
+Setup and methods used for [Evaluation](./Evaluation/)
+
+
+# Design
+
+The board is 0.063 thick, FR4, two layer, 1 oz copper with ENIG (gold) finish.
+
+![Top](./Documents/14226,Top.png "RPUadpt Top")
+![TAssy](./Documents/14226,TAssy.jpg "RPUadpt Top Assy")
+![Bottom](./Documents/14226,Bottom.png "RPUadpt Bottom")
+![BAssy](./Documents/14226,BAssy.jpg "RPUadpt Bottom Assy")
+
+## Electrical Parameters (Typical)
+
+```
+        5V pin needs 150mA (RPUno has over 1A) to power RPU_BUS
+        This is OSH so refer to the parts used for storage and operation limits.
+```
+
+## Electrical Schematic
+
+![Schematic](./Documents/14226,Schematic.png "RPUadpt Schematic")
+
+## Testing
+
+Check correct assembly and function with [Testing](./Testing/)
+
+
+# Bill of Materials
+
+Import the [BOM](./Design/14226,BOM.csv) into LibreOffice Calc (or Excel) with semicolon separated values, or use a text editor.
+
+
+# How To Use
+
+An ICSP tool is used to program the bus manager with the [Remote] example firmware. Then plug the RPUadpt into an RPUno with the desired setup (e.g. [Solenoid] with [K3]). Another RPUftdi and RPUno can be used with a host to communicate with the RPUadpt and its RPUno. Further boards will need the [Remote] firmware have its rpu_bus address set in EEPROM.
+
+[Remote]: ../Remote
+[Solenoid]: https://github.com/epccs/RPUno/tree/master/Solenoid
+[K3]: https://github.com/epccs/Driver/tree/master/K3
+
+__WARNING: The shield will be damaged if removed from a powered MCU board. Before separating the shield from the MCU board it is very important to check that all power sources are disconnected.__
+
+The CAT5 needs wired just like an Ethernet cable following T568A (or T568B) method. http://en.wikipedia.org/wiki/Category_5_cable
+
+Grounding should occur at one location only. If a RPUftdi is used the host frame will be connected to the local earth grounding system through USB. Unfortunately, the ground wires within CAT5 will not survive a lightning strike and will bring it to the host. To reduce the risk (and help comply with electrical code) run a #14 AWG ground wire between the remote device and the ground system connected to the host chassis. Also, the host chassis needs a good (#14 AWG or larger) wire to the same ground system (see NEC sec 250). 
