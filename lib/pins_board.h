@@ -32,7 +32,7 @@
 #define TX_DE 5
 #define DTR_nRE 6
 #define DTR_DE 7
-#define ICP1 8
+#define SHUTDOWN 8
 
 #define LED_BUILTIN 9
 

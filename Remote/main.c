@@ -64,11 +64,13 @@ static uint8_t txBufferLength = 0;
 #define BLINK_ERROR_DELAY 200
 #define UART_TTL 500
 #define LOCKOUT_DELAY 30000
+#define SHUTDOWN_TIME 1000
 
 static unsigned long blink_started_at;
 static unsigned long lockout_started_at;
 static unsigned long uart_started_at;
 static unsigned long bootloader_started_at;
+static unsigned long shutdown_started_at;
 
 static uint8_t bootloader_started;
 static uint8_t host_active;
@@ -80,6 +82,8 @@ static uint8_t host_is_foreign;
 static uint8_t local_mcu_is_rpu_aware;
 static uint8_t rpu_address;
 static uint8_t write_rpu_address_to_eeprom;
+static uint8_t shutdown_detected;
+static uint8_t shutdown_started;
 
 volatile uint8_t error_status;
 volatile uint8_t uart_output;
@@ -143,6 +147,19 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
         if ( (txBuffer[0] == 3) ) // buffer the byte that is sent on DTR pair for use when HOST_nDTR toggles
         {
             bootloader_address = txBuffer[1];
+        }
+        if ( (txBuffer[0] == 4) ) // when ICP1 pin is pulled  down the host (Pi Zero on RPUp) should hault
+        {
+            txBuffer[1] = shutdown_detected;
+            shutdown_detected = 0; // clear shutdown_detected
+        }
+        if ( (txBuffer[0] == 5) ) // pull ICP1 pin low to hault the host (Pi Zero on RPUp)
+        {
+            shutdown_started = txBuffer[1];
+            pinMode(SHUTDOWN, OUTPUT);
+            digitalWrite(SHUTDOWN, LOW);
+            shutdown_detected = 0; // clear shutdown_detected
+            shutdown_started_at = millis();
         }
         if ( (txBuffer[0] == 6) ) // TWI command to read error status
         {
@@ -265,12 +282,16 @@ void setup(void)
     digitalWrite(DTR_DE, LOW);  // seems to be a startup glitch ??? so disallow DTR pair driver to enable if DTR_TXD is low
     pinMode(nSS, OUTPUT); // nSS is input to a Open collector buffer used to pull to MCU nRESET low
     digitalWrite(nSS, HIGH); 
+    pinMode(SHUTDOWN, INPUT);
+    digitalWrite(SHUTDOWN, HIGH); // trun on a weak pullup 
 
     bootloader_address = RPU_HOST_CONNECT; 
     host_active = 0;
     lockout_active = 0;
     error_status = 0;
     write_rpu_address_to_eeprom = 0;
+    shutdown_detected = 0;
+    shutdown_started = 0;
 
     //Timer0 Fast PWM mode, Timer1 & Timer2 Phase Correct PWM mode.
     initTimers(); 
@@ -545,7 +566,31 @@ void save_rpu_addr_state(void)
         }
     }
 }
-    
+
+void check_shutdown(void)
+{
+    if (shutdown_started)
+    {
+        unsigned long kRuntime = millis() - shutdown_started_at;
+        
+        if ( kRuntime > SHUTDOWN_TIME)
+        {
+            pinMode(SHUTDOWN, INPUT);
+            digitalWrite(SHUTDOWN, HIGH); // trun on a weak pullup 
+            shutdown_started = 0; // set shutdown_started when setting shutdown with I2C command 5
+            shutdown_detected = 1; // clear shutdown_detected when reading with I2C command 4
+        }
+    }
+    else
+        if (!shutdown_detected)
+        { 
+            if( !digitalRead(SHUTDOWN) ) 
+            {
+                shutdown_detected = 1; // clear shutdown_detected when reading with I2C command 4
+            }
+        }
+}
+
 int main(void)
 {
     setup();
@@ -560,6 +605,7 @@ int main(void)
         check_lockout();
         check_uart();
         if(write_rpu_address_to_eeprom) save_rpu_addr_state();
+        check_shutdown();
     }    
 }
 

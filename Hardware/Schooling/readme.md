@@ -19,7 +19,9 @@ Some lessons I learned doing RPUadpt.
 
 ## ^4 Bus Manager ICP1 Used to Hault Host
 
-Connect bus manager ICP1 pin to a test point rather than DTR transceiver. RPUpi is using it to shutdown/hault the host computer.
+Connect bus manager ICP1 pin to a test point rather than DTR transceiver. RPUpi is using it to shutdown/halt the host computer. Cut the indicated PCB trace to open the ICP1 pin.
+
+![Open ICP1](./14226^4_OpenICP1.png "Open ICP1")
 
 
 ## ^3 Cut VIN for RPUno^4
