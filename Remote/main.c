@@ -151,15 +151,21 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
         if ( (txBuffer[0] == 4) ) // when ICP1 pin is pulled  down the host (Pi Zero on RPUp) should hault
         {
             txBuffer[1] = shutdown_detected;
-            shutdown_detected = 0; // clear shutdown_detected
+            shutdown_detected = 0; // clear shutdown_detected, it is set in check_shutdown()
         }
         if ( (txBuffer[0] == 5) ) // pull ICP1 pin low to hault the host (Pi Zero on RPUp)
         {
-            shutdown_started = txBuffer[1];
-            pinMode(SHUTDOWN, OUTPUT);
-            digitalWrite(SHUTDOWN, LOW);
-            shutdown_detected = 0; // clear shutdown_detected
-            shutdown_started_at = millis();
+            if (txBuffer[1] == 1)
+            {
+                pinMode(SHUTDOWN, OUTPUT);
+                digitalWrite(SHUTDOWN, LOW);
+                pinMode(LED_BUILTIN, OUTPUT);
+                digitalWrite(LED_BUILTIN, HIGH);
+                shutdown_started = 1; // it is cleared in check_shutdown()
+                shutdown_detected = 0; // it is set in check_shutdown()
+                shutdown_started_at = millis();
+            }
+            // else ignore
         }
         if ( (txBuffer[0] == 6) ) // TWI command to read error status
         {
@@ -310,7 +316,7 @@ void setup(void)
     digitalWrite(DTR_DE, HIGH);  // allow DTR pair driver to enable if DTR_TXD is low
     
     // check if eeprom ID is valid
-    uint8_t EE_id_valid;
+    uint8_t EE_id_valid = 0;
     for(uint8_t i = 0; i <EE_RPU_IDMAX; i++)
     {
         uint8_t id = pgm_read_byte(&EE_IdTable[i]);
@@ -345,6 +351,11 @@ void setup(void)
 // blink if the host is active, fast blink if error status, slow blink in lockout
 void blink_on_activate(void)
 {
+    if (shutdown_detected) // do not blink,  power usage needs to be very stable to tell if the host has haulted. 
+    {
+        return;
+    }
+    
     unsigned long kRuntime = millis() - blink_started_at;
     
     if (!error_status) 
@@ -577,8 +588,8 @@ void check_shutdown(void)
         {
             pinMode(SHUTDOWN, INPUT);
             digitalWrite(SHUTDOWN, HIGH); // trun on a weak pullup 
-            shutdown_started = 0; // set shutdown_started when setting shutdown with I2C command 5
-            shutdown_detected = 1; // clear shutdown_detected when reading with I2C command 4
+            shutdown_started = 0; // set with I2C command 5
+            shutdown_detected = 1; // clear when reading with I2C command 4
         }
     }
     else
@@ -586,7 +597,9 @@ void check_shutdown(void)
         { 
             if( !digitalRead(SHUTDOWN) ) 
             {
-                shutdown_detected = 1; // clear shutdown_detected when reading with I2C command 4
+                pinMode(LED_BUILTIN, OUTPUT);
+                digitalWrite(LED_BUILTIN, HIGH);
+                shutdown_detected = 1; // clear when reading with I2C command 4
             }
         }
 }

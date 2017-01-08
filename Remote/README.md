@@ -6,7 +6,7 @@ This bus manager firmware is for an RPUadpt board, it will watch for a byte matc
 
 In normal mode the RS-422 pairs have RX/TX driver and receiver enabled. The RS-485 (DTR) pair is connected to the bus manager UART and my accept bytes that are compared to the local RPU_ADDRESS or to a value for RPU_NORMAL_MODE (which connects the MCU to bus).
 
-Durring lockout the RX pair receiver is disconnected from the local MCU RX input. While the TX pair driver is disconnected from the local MCU TX output.  
+Durring lockout the RX pair receiver is disconnected from the local MCU RX input. While the TX pair driver is disconnected from the local MCU TX output.
 
 A byte on the DTR pair that matches the RPU_ADDRESS will cause a reset pulse to activate the bootloader. After bootloading an I2C command can be issued to send the RPU_NORMAL_MODE byte on the DTR pair.
 
@@ -143,7 +143,7 @@ The example programs read the address durring setup, so they will need a reset.
 
 ## Set RPUpi Shutdown
 
-Using an RPUno and an RPUftdi shield, connect another RPUno with i2c-debug firmware to the RPUpi shield at address '1'. To hault the host send the I2C shutdown command. 
+To hault the host send the I2C shutdown command 5 (first byte), with data 1 (second byte) which sets shutdown_started, clears shutdown_detected and pulls down the SHUTDOWN (ICP1) pin. The shutdown_started flag is also used to stop blinking of the LED_BUILTIN to reduce power usage noise so that the host power usage can be clearly seen.
 
 ``` 
 /1/address 41
@@ -154,10 +154,12 @@ Using an RPUno and an RPUftdi shield, connect another RPUno with i2c-debug firmw
 {"rxBuffer":[{"data":"0x5"},{"data":"0x1"}]}
 ``` 
 
+Above used an RPUftdi shield, connected to an RPUpi shield at address '1'. The shields were each mounted on an RPUno loaded with i2c-debug firmware.
+
 
 ## Read RPUpi Shutdown Detected
 
-Using an RPUno and an RPUftdi shield, connect another RPUno with i2c-debug firmware to the RPUpi shield at address '1'. And check if the button has been pushed to hault the host.
+To check if host got a hault command or if the shutdown button got pressed send the I2C shutdown command 4 (first byte), with place holder data (second byte). This clears shutdown_detected flag that was used to keep the LED_BUILTIN from blinking.
 
 ``` 
 /1/address 41
@@ -172,8 +174,9 @@ Using an RPUno and an RPUftdi shield, connect another RPUno with i2c-debug firmw
 {"rxBuffer":[{"data":"0x4"},{"data":"0x0"}]}
 ``` 
 
-Second value in rxBuffer has shutdown_detected value (0 or 1). It is cleared when reading.
+Above used an RPUftdi shield, connected to an RPUpi shield at address '1'. The shields were each mounted on an RPUno loaded with i2c-debug firmware.
 
+Second value in rxBuffer has shutdown_detected value (0 or 1). It is cleared when reading.
 
 
 ## Notes
