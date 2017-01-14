@@ -20,6 +20,8 @@ Shield used to connect a microcontroler to a full duplex RS-422 (RX and TX pairs
 
 ![Status](./Hardware/status_icon.png "Status")
 
+At this time using this shield will require programming it with an ICSP tool that is able to program a 3.3V ATmega328p target. 
+
 
 ## [Hardware](./Hardware)
 
