@@ -45,20 +45,18 @@ If the host computer exposes the serial port to the network then security is eff
 ![Status](./status_icon.png "RPUadpt Status")
 
 ```
-        ^5  Done: 
-            WIP: 
-            Todo: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing, Evaluation.
+        ^5  Done: Design, Layout, BOM,
+            WIP: Review*,
+            Todo:  Order Boards, Assembly, Testing, Evaluation.
             *during review the Design may change without changing the revision.
-            Connect bus manager ICP1 pin to a test point rather than DTR.
+            Connect bus manager ICP1 pin to a test point.
+            Connect bus manager RX/TX to test points. 
 
         ^4 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
-            WIP: Evaluation 
+            WIP: Evaluation
             Todo: 
-            *during review the Design may change without changing the revision.
-            Notes: HOST_TX has a 10k pull-up now. Pinout for a FTDI Friend 
-                which may supply power through D1 if the node is not powered.
-                +5V power is used from the node board (which should have a SMPS 
-                to convert VIN into +5V).
+            location:   2016-12-15 SWall Encl /w K3^0, RPUno^4 (mods to ADC6 & ADC7), SLP003-12U. 
+                        2017-1-5 ICP1 hacked open.
 ```
 
 Debugging and fixing problems i.e. [Schooling](./Schooling/)

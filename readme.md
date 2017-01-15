@@ -10,7 +10,7 @@ Shield used to connect a microcontroler to a full duplex RS-422 (RX and TX pairs
 
 [Forum](http://rpubus.org/bb/viewforum.php?f=7)
 
-[OSHpark](https://oshpark.com/shared_projects/E8B1i7ss)
+[OSHpark ^4](https://oshpark.com/shared_projects/E8B1i7ss) [OSHpark ^5](https://oshpark.com/shared_projects/2eaZ8Bau)
 
 [RPUno]: https://github.com/epccs/RPUno
 [RPUpi]: https://github.com/epccs/RPUpi
