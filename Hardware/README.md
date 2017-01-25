@@ -53,10 +53,12 @@ If the host computer exposes the serial port to the network then security is eff
             Connect bus manager RX/TX to test points. 
 
         ^4 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
-            WIP: Evaluation
-            Todo: 
-            location:   2016-12-15 SWall Encl /w K3^0, RPUno^4 (mods to ADC6 & ADC7), SLP003-12U. 
-                        2017-1-5 ICP1 hacked open.
+           WIP: Evaluation
+           Todo: 
+           location: 2016-12-1 SWall Encl /w K3^0, RPUno^4, SLP003-12U. 
+                     2017-1-1 RPUno^4 had ADC7 parts changed to measre battery.
+                     2017-1-1 RPUno^4 had ADC6 hacked to measure raw PV.
+                     2017-1-5 This^4 had ICP1 hacked open.
 ```
 
 Debugging and fixing problems i.e. [Schooling](./Schooling/)

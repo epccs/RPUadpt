@@ -47,4 +47,4 @@ A Host computer (e.g. Pi Zero on [RPUpi] or desktop with [RPUftdi]) issues comma
 [binutils-avr]: http://packages.ubuntu.com/search?keywords=binutils-avr
 [gdb-avr]: http://packages.ubuntu.com/search?keywords=gdb-avr
 [avr-libc]: http://packages.ubuntu.com/search?keywords=avr-libc
-[avrdude]: http://packages.ubuntu.com/search?keywords=avrdude[avrdude](http://packages.ubuntu.com/search?keywords=avrdude)
+[avrdude]: http://packages.ubuntu.com/search?keywords=avrdude
