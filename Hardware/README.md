@@ -23,13 +23,15 @@ This board connects a [RPUno] to a multi-drop serial bus.
 ## Uses
 
 ```
-        Wired multi-drop serial communication between bare metal and a host.
-        Daisy chain multiple AVR MCU's to a host computer in a way that allows avrdude to upload firmware.
+        Daisy chain a multi-drop serial communication between RPUno's and a host.
+        Example firmware [Remote] has a point to point (P2P) boatload mode.
+        The bootload mode activates when the host connects. 
+        Then the addressed RPUno has a P2P to receive firmware from avrdude.
 ```
 
 ## Notice
 
-If the host computer exposes the serial port to the network then security is effectively compromised. 
+The serial port is a wired connection, it is immune to discovery or interference by radio. The simple hardware is raw and lacks training wheels, it should not be exposed to a network. Perhaps use SSH to forward it to a local port if needed.
 
 
 # Table Of Contents
@@ -45,17 +47,10 @@ If the host computer exposes the serial port to the network then security is eff
 ![Status](./status_icon.png "RPUadpt Status")
 
 ```
-        ^5  Done: Design, Layout, BOM,
-            WIP: Review*,
-            Todo:  Order Boards, Assembly, Testing, Evaluation.
-            *during review the Design may change without changing the revision.
-            Connect bus manager ICP1 pin to a test point.
-            Connect bus manager RX/TX to test points. 
+        ^5 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
+           WIP: Evaluation.
 
-        ^4 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
-           WIP: Evaluation
-           Todo: 
-           location: 2016-12-1 SWall Encl /w K3^0, RPUno^4, SLP003-12U. 
+        ^4 location: 2016-12-1 SWall Encl /w K3^0, RPUno^4, SLP003-12U. 
                      2017-1-1 RPUno^4 had ADC7 parts changed to measre battery.
                      2017-1-1 RPUno^4 had ADC6 hacked to measure raw PV.
                      2017-1-5 This^4 had ICP1 hacked open.
