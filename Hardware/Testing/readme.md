@@ -48,8 +48,8 @@ Apply a 5V source set with a 30mA current limit to the +5V header pin. Check tha
 
 
 ```
-{   "I_IN_BLANKMCU_mA":[2.1,2.2,],
-    "LDO_V":[3.285,3.299,] }
+{   "I_IN_BLANKMCU_mA":[2.1,2.2,2.6,2.3,2.6,],
+    "LDO_V":[3.285,3.299,3.303,3.275,3.276] }
 ```
 
 ## Set MCU Fuse
@@ -68,7 +68,7 @@ git clone https://github.com/epccs/RPUadpt
 cd ~/RPUadpt/Bootload
 ```
 
-Connect a 5V supply with CC mode set at 30mA to the +5V (J? pin 4) and  0V (J? pin 2). Connect the ICSP tool (J?). The MCU needs its fuses set, so run the Makefile rule to do that. 
+Connect a 5V supply with CC mode set at 30mA to the +5V (J7 pin 4) and  0V (J7 pin 2). Connect the ICSP tool (J9). The MCU needs its fuses set, so run the Makefile rule to do that. 
 
 ```
 make fuse
@@ -79,7 +79,7 @@ Note: There is not a bootloader, it just sets fuses.
 Disconnect the ICSP tool and measure the input current for 8Mhz internal at 3.3V.
 
 ```
-{   "I_IN_MCU_8MHZ_INTRN_mA":[4.0,4.0,]}
+{   "I_IN_MCU_8MHZ_INTRN_mA":[4.0,4.0,4.4,4.1,4.3,]}
 
 ```
 
@@ -100,8 +100,8 @@ The program loops through the test. It blinks the red LED to show which test num
 As the firmware loops the input current can be measured, it should have two distinct levels, one when the DTR pair is driven low and one when the DTR pair is not driven. The blinking LED leaves the DMM unsettled. Turn off power.
 
 ```
-{   "DTR_HLF_LD_mA":[33.0,33.1,],
-    "DTR_NO_LD_mA":[10.0,10.0,] }
+{   "DTR_HLF_LD_mA":[33.0,33.1,33.3,32.7,33.0,],
+    "DTR_NO_LD_mA":[10.0,10.0,10.1,10.0,10.0,] }
 ```
 
 Note: the ICSP tool is pluged in and has some pullups with the level shift.
@@ -109,13 +109,13 @@ Note: the ICSP tool is pluged in and has some pullups with the level shift.
 
 ##  Check Differential Bias
 
-Plug a header (or jumper) onto the +5V pin so that IOREF is jumpered to +5V. Connect TX pin to 0V to pull it down to simulate the MCU sending data. The CheckDTR firmware will set TX_DE and RX_DE high. Connect a 5V supply with CC mode set at 100mA to the +5V that was jumpered to IOREF (J? pin 4) and 0V (J? pin 2). 
+Plug a header (or jumper) onto the +5V pin so that IOREF is jumpered to +5V. Plug a CAT5 RJ45 stub with 100 Ohm RX, TX and DTR pair terminations. Connect TX pin to 0V to pull it down to simulate the MCU sending data. The CheckDTR firmware will set TX_DE and RX_DE high. Connect a 5V supply with CC mode set at 100mA to the +5V that was jumpered to IOREF (J7 pin 4) and 0V (J7 pin 2). 
 
 Check  that the input current is cycling between 56mA and 33mA. At 56mA the TX driver is driving the TX pair with half load and DTR driver is driving the DTR pair with a half load, while ony the TX pair is driven at 33mA. 
 
 ```
-{   "DTR_TX_HLF_LD_mA":[55.0,55.5,],
-    "TX_HLF_LD_mA":[32.3,32.4,] }
+{   "DTR_TX_HLF_LD_mA":[55.0,55.2,54.9,55.5,],
+    "TX_HLF_LD_mA":[32.3,32.2,32.0,32.4,] }
 ```
 
 
@@ -124,8 +124,8 @@ Check  that the input current is cycling between 56mA and 33mA. At 56mA the TX d
 Same as Differential Bias test with a plug in a RJ45 loopback connector to connect the TX differential pair to the RX differential pair and the input current. The TX driver is now driving a differential pair with 50 Ohms on it, which is the normal load. Verify that RX has 0V on it now.
 
 ```
-{   "DTR_HLF_LD_TX_FL_LD_mA":[72.3,],
-    "TX_FL_LD_mA":[49.0,] }
+{   "DTR_HLF_LD_TX_FL_LD_mA":[72.3,72.3,72.1,72.4,],
+    "TX_FL_LD_mA":[49.0,49.4,49.2,49.8,] }
 ```
 
 Turn off power.
@@ -133,11 +133,11 @@ Turn off power.
 
 ## Differential Loopback with RX Driver
 
-Disconnect TX from ground and Connect it to IOREF, which will disable the TX driver (U2) so that the RX driver (U6) can operate through the RJ45 loopback. Plug in the RJ45 loopback connector so the TX pair is looped back to the RX pair. Short HOST_TX (J3 pin 4) to ground to cause the RX driver to drive the RX pair. Measure the supply current when RX is driven and when a DTR half load is added.
+Disconnect TX from ground and Connect it to IOREF, which will disable the TX driver (U2) so that the RX driver (U6) can operate through the RJ45 loopback. Plug a CAT5 RJ45 stub with 100 Ohm RX, TX and DTR pair terminations. Plug in the RJ45 loopback connector so the TX pair is looped back to the RX pair. Short HOST_TX (J3 pin 4) to ground to cause the RX driver to drive the RX pair. Measure the supply current when RX is driven and when a DTR half load is added.
 
 ```
-{   "DTR_HLF_LD_RX_FL_LD_mA":[73.0,72.7,],
-    "RX_FL_LD_mA":[50.5,49.9,] }
+{   "DTR_HLF_LD_RX_FL_LD_mA":[73.0,72.7,73.0,72.5,],
+    "RX_FL_LD_mA":[50.5,49.9,49.9,49.6,] }
 ```
 
 

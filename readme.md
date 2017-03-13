@@ -30,7 +30,7 @@ Hardware files are in Eagle, there is also some testing, evaluation, and schooli
 
 ## Example
 
-A multi-drop serial bus allows multiple microcontroller boards to be connected to a host serial port. The host computer crossover occurs on an [RPUftdi] (desktop) or [RPUpi] (Pi Zero) shield. The host and microcontrollers control the transceivers differential driver automatically, which means no software [magic] is needed, though only one microcontroller should be allowed to talk. 
+A multi-drop serial bus allows multiple microcontroller boards to be connected to a host serial port. The host computer crossover occurs on an [RPUftdi] or [RPUpi] shield. The host and microcontrollers control the transceivers differential driver automatically, which means no software [magic] is needed, though only one microcontroller should be allowed to talk. 
 
 [magic]: https://github.com/pyserial/pyserial/blob/master/serial/rs485.py
 
