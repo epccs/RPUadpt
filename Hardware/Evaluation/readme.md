@@ -7,10 +7,20 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
+5. [^5 South Wall Enclosure](#3-remote-bootload)
 4. [^3 Remote Bootload](#3-remote-bootload)
 3. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
 2. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+
+## ^5 South Wall Enclosure
+
+![South Wall Enclosure](./14226^5_SWallEnclWithRPUnoAndK3.jpg "South Wall Enclosure")
+
+It is mounted on an RPUno that controls some latching solenoids. 
+
+I had had the previous version in the Enclosure but it had some hacks, this one is clean (though my wiring is a mess, that is not what I'm trying to show).
 
 
 ## ^3 Remote Bootload

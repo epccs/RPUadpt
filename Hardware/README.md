@@ -49,11 +49,13 @@ The serial port is a wired connection, it is immune to discovery or interference
 ```
         ^5 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
            WIP: Evaluation.
+           location: 2017-3-19 addr '1', SWallEncl /w K3^1, RPUno^5, SLP003-12U. 
 
         ^4 location: 2016-12-1 SWall Encl /w K3^0, RPUno^4, SLP003-12U. 
                      2017-1-1 RPUno^4 had ADC7 parts changed to measre battery.
                      2017-1-1 RPUno^4 had ADC6 hacked to measure raw PV.
                      2017-1-5 This^4 had ICP1 hacked open.
+                     2017-3-19 scraped
 ```
 
 Debugging and fixing problems i.e. [Schooling](./Schooling/)
