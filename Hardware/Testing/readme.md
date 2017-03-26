@@ -76,11 +76,12 @@ make fuse
 
 Note: There is not a bootloader, it just sets fuses.
 
-Disconnect the ICSP tool and measure the input current for 8Mhz internal at 3.3V.
+Disconnect the ICSP tool and measure the input current for 12Mhz crystal at 3.3V. It takes a long time to settel.
 
 ```
+{   "I_IN_MCU_12MHZ_LP-CRYSTAL_mA":[5.1,5.2,5.0,5.5,5.3,5.1,5.1,]}
+# old values for referance
 {   "I_IN_MCU_8MHZ_INTRN_mA":[4.0,4.0,4.4,4.1,4.3,]}
-
 ```
 
 
@@ -104,7 +105,7 @@ As the firmware loops the input current can be measured, it should have two dist
     "DTR_NO_LD_mA":[10.0,10.0,10.1,10.0,10.0,] }
 ```
 
-Note: the ICSP tool is pluged in and has some pullups with the level shift.
+Note: the ICSP tool is pluged in and has some pullups with the level shift. 
 
 
 ##  Check Differential Bias

@@ -27,23 +27,27 @@ static unsigned long blink_started_at;
 int main(void)
 {
     pinMode(LED_BUILTIN,OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);      // turn the LED on by sinking current
 
     initTimers(); //Timer0 Fast PWM mode, Timer1 & Timer2 Phase Correct PWM mode.
 
     sei(); // Enable global interrupts to start TIMER0
+    
+    blink_started_at = millis();
 
     while (1) 
     {
         unsigned long kRuntime = 0;
-
-        digitalWrite(LED_BUILTIN,HIGH);
-        blink_started_at = millis();
-        while (kRuntime <= 100) // wait for 1/10 second
+        
+        kRuntime = millis() - blink_started_at;
+        
+        if (kRuntime > 1000) 
         {
-            kRuntime = millis() - blink_started_at;
+            digitalToggle(LED_BUILTIN);
+            
+            // next toggle 
+            blink_started_at += 1000; 
         }
-        digitalWrite(LED_BUILTIN,LOW);
-        _delay_ms(1000);
     }    
 }
 
