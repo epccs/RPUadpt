@@ -7,11 +7,19 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
+6. [^5 Bus Termination](#5-bus-termination)
 5. [^5 South Wall Enclosure](#5-south-wall-enclosure)
 4. [^3 Remote Bootload](#3-remote-bootload)
 3. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
 2. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+
+## ^5 Bus Termination
+
+![Bus Termination](./14226^5_RPU_busTermination.jpg "Bus Termination")
+
+The RX, TX, and DTR pair need a 100 Ohm termination on each end of the CAT5 daisy chain. There are places on the board to solder the resistors, they are on the RPUftdi, but for an RPUadpt an RJ45 plug allows adding to the daisy chain without soldering. I'm going to supply this for now since it is how I'm using the RPUadpt board.
 
 
 ## ^5 South Wall Enclosure
@@ -21,6 +29,8 @@ This shows the setup and method used for evaluation of RPUadpt.
 It is mounted on an RPUno that controls some latching solenoids. 
 
 I had had the previous version in the Enclosure but it had some hacks, this one is clean (though my wiring is a mess, that is not what I'm trying to show).
+
+DTR pair is running at 250k bits/sec, and the 12MHz crystal is enabled.
 
 
 ## ^3 Remote Bootload
