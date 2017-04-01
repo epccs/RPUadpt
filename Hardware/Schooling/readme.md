@@ -4,6 +4,7 @@ Some lessons I learned doing RPUadpt.
 
 # Table Of Contents:
 
+12. [^5 RJ45 Termination](#4-rj45-termination)
 11. [^4 Bus Manager ICP1 Used to Hault Host](#4-bus-nanager-icp1-used-to-hault-host)
 10. [^3 Cut VIN for RPUno^4](#3-cut-vin-for-rpuno4)
 9. [^3 Pull-up HOST_TX](#3-pull-up-host_tx)
@@ -15,6 +16,10 @@ Some lessons I learned doing RPUadpt.
 3. [^1 FT231X Pitch](#1-ft231x-pitch)
 2. [^1 ATtiny1634 !RESET 10k Pullup](#1-attiny1634-reset-10k-pullup)
 1. [^0 MCU RX not Seeing Data](#0-mcu-rx-not-seeing-data)
+
+## ^5 RJ45 Termination
+
+Surface mount resistors break off the CAT5 wire when the pair is moved, so the termination needs to be a through hole part.
 
 
 ## ^4 Bus Manager ICP1 Used to Hault Host
