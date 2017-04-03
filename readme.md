@@ -6,15 +6,15 @@ From <https://github.com/epccs/RPUadpt/>
 
 Shield used to connect a microcontroler to a full duplex RS-422 (RX and TX pairs) and an out of band half duplex RS-485 (DTR pair) over CAT5. Its a multidrop bus between a host (e.g. Pi Zero on [RPUpi] or desktop with [RPUftdi]) and an MCU board (e.g. [RPUno]).
 
-[HackADay](https://hackaday.io/project/17719-rpuadpt)
+[RPUno]: https://github.com/epccs/RPUno
+
+[Store](https://www.tindie.com/products/ron-sutherland/rpuadpt/)
 
 [Forum](http://rpubus.org/bb/viewforum.php?f=7)
 
-[OSHpark ^4](https://oshpark.com/shared_projects/E8B1i7ss)
+[HackADay](https://hackaday.io/project/17719-rpuadpt)
 
-[RPUno]: https://github.com/epccs/RPUno
-[RPUpi]: https://github.com/epccs/RPUpi
-[RPUftdi]: https://github.com/epccs/RPUftdi
+[OSHpark](https://oshpark.com/shared_projects/zgprfBo8)
 
 ## Status
 
@@ -25,13 +25,15 @@ At this time using this shield will require programming with an ICSP tool that i
 
 ## [Hardware](./Hardware)
 
-Hardware files are in Eagle, there is also some testing, evaluation, and schooling notes for referance.
+Hardware files and notes for referance.
 
 
 ## Example
 
 A multi-drop serial bus allows multiple microcontroller boards to be connected to a host serial port. The host computer crossover occurs on an [RPUftdi] or [RPUpi] shield. The host and microcontrollers control the transceivers differential driver automatically, which means no software [magic] is needed, though only one microcontroller should be allowed to talk. 
 
+[RPUpi]: https://github.com/epccs/RPUpi
+[RPUftdi]: https://github.com/epccs/RPUftdi
 [magic]: https://github.com/pyserial/pyserial/blob/master/serial/rs485.py
 
 ![MultiDrop](./Hardware/Documents/MultiDrop.png "MultiDrop")
@@ -52,12 +54,13 @@ When avrdude opens the serial port it pulls the nDTR line low and the manager br
 
 ## AVR toolchain
 
-* sudo apt-get install [gcc-avr]
-* sudo apt-get install [binutils-avr]
-* sudo apt-get install [gdb-avr]
-* sudo apt-get install [avr-libc]
-* sudo apt-get install [avrdude]
-    
+The core files for this board are in the /lib folder. Each example has its files and a Makefile in its own folder. The toolchain packages that I use are available on Ubuntu and Raspbian. 
+
+```
+sudo apt-get install git [gcc-avr] [binutils-avr] [gdb-avr] [avr-libc] [avrdude]
+git clone https://github.com/epccs/RPUadpt
+```
+
 [gcc-avr]: http://packages.ubuntu.com/search?keywords=gcc-avr
 [binutils-avr]: http://packages.ubuntu.com/search?keywords=binutils-avr
 [gdb-avr]: http://packages.ubuntu.com/search?keywords=gdb-avr

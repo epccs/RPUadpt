@@ -7,12 +7,26 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
+7. [^5 Remote Reset](#5-remote-reset)
 6. [^5 Bus Termination](#5-bus-termination)
 5. [^5 South Wall Enclosure](#5-south-wall-enclosure)
 4. [^3 Remote Bootload](#3-remote-bootload)
 3. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
 2. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+
+## ^5 Remote Reset
+
+I used an RPUftdi^4 to do a remote reset of an RPUno^6 with an RPUadpt^5 shield. The RPUno was also wired to a K3^2 board. A quick video shows picocom used to do the remote reset. 
+
+[^5 Remote Reset Video](http://rpubus.org/Video/RPUno%5E6_RPUadpt%5E5_RPUftdi%5E4_K3%5E2_RemoteReset.mp4 "^5 Remote Reset Video")
+
+![^5 Remote Reset](./RPUadpt^5_RPUno^6_K3^2_RPUftdi^4_RemoteReset.jpg "^5 Remote Reset")
+
+After the reset, the bootloader runs for a few seconds and then passes control to the [Solenoid] firmware which reads an address from the RPUadpt shield over I2C and cycles through each latching coil to place them in a known state. Reading the address from RPUadpt also lets the bus manager on that board broadcast a byte on the RS-485 bus management pair (DTR) that ends the lockout placed on other devices to allow a point to point bootload connection (i.e. a return to normal point to multipoint mode).
+
+[Solenoid]: https://github.com/epccs/RPUno/tree/master/Solenoid
 
 
 ## ^5 Bus Termination
