@@ -8,20 +8,21 @@ Shield used to connect a microcontroler to a full duplex RS-422 (RX and TX pairs
 
 [RPUno]: https://github.com/epccs/RPUno
 
-[Store](https://www.tindie.com/products/ron-sutherland/rpuadpt/)
-
 [Forum](http://rpubus.org/bb/viewforum.php?f=7)
 
 [HackADay](https://hackaday.io/project/17719-rpuadpt)
 
-[OSHpark](https://oshpark.com/shared_projects/zgprfBo8)
-
 ## Status
+
+Available through [Tindie](https://www.tindie.com/products/ron-sutherland/rpuadpt-a-shield-for-rs-422-over-cat5/)
 
 ![Status](./Hardware/status_icon.png "Status")
 
-At this time using this shield will require programming with an ICSP tool that is able to program a 3.3V ATmega328p target. 
+This shield is programmed with an in-circuit serial programming tool that is able to do a 3.3V ATmega328p target. I use an Arduino Uno with the [ArduinoISP] sketch and an SPI level shifter (e.g. [ICSP]).
 
+[ICSP](https://github.com/epccs/Driver/tree/master/ICSP)
+
+[ArduinoISP](https://github.com/arduino/Arduino/blob/master/build/shared/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino)
 
 ## [Hardware](./Hardware)
 
