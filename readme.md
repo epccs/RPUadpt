@@ -20,9 +20,9 @@ Available through [Tindie](https://www.tindie.com/products/ron-sutherland/rpuadp
 
 This shield is programmed with an in-circuit serial programming tool that is able to do a 3.3V ATmega328p target. I use an Arduino Uno with the [ArduinoISP] sketch and an SPI level shifter (e.g. [ICSP]).
 
-[ICSP](https://github.com/epccs/Driver/tree/master/ICSP)
+[ICSP]: https://github.com/epccs/Driver/tree/master/ICSP
 
-[ArduinoISP](https://github.com/arduino/Arduino/blob/master/build/shared/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino)
+[ArduinoISP]: https://github.com/arduino/Arduino/blob/master/build/shared/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino
 
 ## [Hardware](./Hardware)
 
