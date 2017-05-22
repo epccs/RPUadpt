@@ -48,7 +48,7 @@ The I2C address is 0x29 (dec 41). It is organized as an array of read or write c
 3. write the address that will be sent when DTR/RTS toggles
 4. read RPUpi shutdown (the ICP1 pin has a weak pull up and a momentary switch)
 5. set RPUpi shutdown (pull down ICP1 for SHUTDOWN_TIME in millis to cause host to hault)
-6. reads error status bits[0:DTR readback timeout, 1:twi transmit fail, 2:DTR readback not match]
+6. reads error status bits [0:DTR readback timeout, 1:twi transmit fail, 2:DTR readback not match, 3:host lockout by I2C]
 7. wrties (or clears) error status 
 
 

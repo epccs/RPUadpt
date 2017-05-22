@@ -95,8 +95,13 @@ Import the [BOM](./Design/14226,BOM.csv) into LibreOffice Calc (or Excel) with s
 
 # How To Use
 
-An ICSP tool is used to program the bus manager with the [Remote] example firmware. Then plug the RPUadpt into an RPUno with the desired setup (e.g. [Solenoid] with [K3]). An RPUftdi and Uno clone can be used with a host to communicate with the RPUadpt and its RPUno. Additional boards will need the [Remote] firmware to have the rpu_bus address set in EEPROM.
+## ICSP
 
+[ArduinoISP] sketch on an [Uno] with a SPI level converter is the [ICSP] tool I use to program the bus manager with the [Remote] example firmware. I then plug the RPUadpt into an RPUno and load some application firmware (e.g. [Solenoid] with [K3]). An RPUftdi and Uno clone can be used with a host to communicate with the RPUadpt and its RPUno. Additional boards will need the [Remote] firmware to have the rpu_bus address set in EEPROM.
+
+[ArduinoISP]: https://github.com/arduino/Arduino/blob/master/build/shared/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino
+[Uno]: https://www.adafruit.com/product/50
+[ICSP]: https://github.com/epccs/Driver/tree/master/ICSP
 [Remote]: ../Remote
 [Solenoid]: https://github.com/epccs/RPUno/tree/master/Solenoid
 [K3]: https://github.com/epccs/Driver/tree/master/K3

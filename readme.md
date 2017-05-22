@@ -58,12 +58,12 @@ When avrdude opens the serial port it pulls the nDTR line low and the manager br
 The core files for this board are in the /lib folder. Each example has its files and a Makefile in its own folder. The toolchain packages that I use are available on Ubuntu and Raspbian. 
 
 ```
-sudo apt-get install git [gcc-avr] [binutils-avr] [gdb-avr] [avr-libc] [avrdude]
+sudo apt-get install git gcc-avr binutils-avr gdb-avr avr-libc avrdude
 git clone https://github.com/epccs/RPUadpt
 ```
 
-[gcc-avr]: http://packages.ubuntu.com/search?keywords=gcc-avr
-[binutils-avr]: http://packages.ubuntu.com/search?keywords=binutils-avr
-[gdb-avr]: http://packages.ubuntu.com/search?keywords=gdb-avr
-[avr-libc]: http://packages.ubuntu.com/search?keywords=avr-libc
-[avrdude]: http://packages.ubuntu.com/search?keywords=avrdude
+* [gcc-avr](http://packages.ubuntu.com/search?keywords=gcc-avr)
+* [binutils-avr](http://packages.ubuntu.com/search?keywords=binutils-avr)
+* [gdb-avr](http://packages.ubuntu.com/search?keywords=gdb-avr)
+* [avr-libc](http://packages.ubuntu.com/search?keywords=avr-libc)
+* [avrdude](http://packages.ubuntu.com/search?keywords=avrdude)

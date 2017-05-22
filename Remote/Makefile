@@ -13,7 +13,14 @@ OBJECTS = main.o \
 MCU   =  atmega328p
 F_CPU = 12000000UL  
 BAUD  =  250000UL
-CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. 
+I2C_ADDRESS = 0x29
+RPU_ADDRESS = 0x31
+# '0' or ascii 0x30 is default address sent on DTR pair when host connects,  e.g. pulls nDTR or nRTS active
+RPU_HOST_CONNECT = 0x30
+CPPFLAGS = -DRPU_HOST_CONNECT=$(RPU_HOST_CONNECT) -DI2C_ADDRESS=$(I2C_ADDRESS) -DRPU_ADDRESS=$(RPU_ADDRESS) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. 
+
+# at power up send a byte on the DTR pair to unlock the bus
+# CPPFLAGS += -DDISCONNECT_AT_PWRUP=1
 
 ## Cross-compilation
 CC = avr-gcc
