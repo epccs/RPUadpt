@@ -22,6 +22,9 @@ CPPFLAGS = -DRPU_HOST_CONNECT=$(RPU_HOST_CONNECT) -DI2C_ADDRESS=$(I2C_ADDRESS) -
 # at power up send a byte on the DTR pair to unlock the bus
 # CPPFLAGS += -DDISCONNECT_AT_PWRUP=1
 
+# at power up set HOST_LOCKOUT_STATUS bit
+CPPFLAGS += -DHOST_LOCKOUT=1
+
 ## Cross-compilation
 CC = avr-gcc
 OBJCOPY = avr-objcopy

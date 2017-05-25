@@ -1,20 +1,25 @@
 # Remote
 
-This bus manager firmware is for an RPUadpt board, it will watch for a byte matching the local RPU_ADDRESS on the DTR pair and when seen reset the local MCU board which places it in bootloader mode. If a non-matching byte is seen the MCU is locked out from the RX and TX pair and no reset occures.
+This bus manager firmware is for an RPUadpt board, it will watch for a byte matching the local RPU_ADDRESS on the DTR pair and when seen reset the local MCU board placing it in bootloader mode. A non-matching byte will disconnect RS-422 from the RX and TX to the shield headers placing it in lockout mode.
 
 ## Overview
 
-In normal mode the RS-422 pairs have RX/TX driver and receiver enabled. The RS-485 (DTR) pair is connected to the bus manager UART and my accept bytes that are compared to the local RPU_ADDRESS or to a value for RPU_NORMAL_MODE (which connects the MCU to bus).
+In normal mode, the RS-422 pairs RX and TX are connected to the shield RX and TX pins. While the RS-485 (DTR) pair is connected to the bus manager UART and used to set the system-wide bus state.
 
-Durring lockout the RX pair receiver is disconnected from the local MCU RX input. While the TX pair driver is disconnected from the local MCU TX output.
+Durring lockout mode the RS-422 pairs RX and TX are disconnected from the shield RX and TX pins.
 
-A byte on the DTR pair that matches the RPU_ADDRESS will cause a reset pulse to activate the bootloader. After bootloading an I2C command can be issued to send the RPU_NORMAL_MODE byte on the DTR pair.
+Bootload mode occures when a byte on the DTR pair matches the RPU_ADDRESS of the shield. It will cause a pulse on the shield reset pin to activate the bootloader on the board the shield is pluged into. After bootloading is done the shield will send the RPU_NORMAL_MODE byte on the DTR pair when the RPU_ADDRESS is read with an I2C command (otherwise the shield will timeout but not connect to the RS-422 bus).
 
-When a byte on DTR does not match the RPU_ADDRESS it will cause the lockout condition that will last for a duration determined by the LOCKOUT_DELAY or when a RPU_NORMAL_MODE byte is seen on the DTR pair.
+lockout mode occures when a byte on the DTR pair does not match the RPU_ADDRESS of shield. It will cause the lockout condition and last for a duration determined by the LOCKOUT_DELAY or when a RPU_NORMAL_MODE byte is seen on the DTR pair.
+
+When nRTS or nDTR are pulled active the bus manager will connect the HOST_TX and HOST_RX lines to the RX and TX pairs, and pull the nCTS and nDSR lines active to let the host know it is Ok to send. If the bus is in use the host remains disconnected from the bus. Note the Remote firmware sets a status bit at startup that prevents the host from connecting until it is cleared with an I2C command.
+
+Arduino Mode (Work in progress, this is a list of ideas and may or may not be doable). It may be a sort of permeate bootload mode that the Arduino IDE can connect to. It would need to be enabled by a program on the board (an Uno) under an RPUftdi, which would set the mode with an I2C command. The command would send out a byte (on DTR pair) that enables a sticky bootload mode that is the point to point communication required for full duplex bootloaders and does not time out but does allow rerunning a proper bootload.
+
 
 ## Firmware Upload
 
-With an ISP tool connected to the bus manager (set the ISP_PORT in Makefile) run 'make isp' and it should compile and then flash the bus manager.
+Use an ICSP tool connected to the bus manager (set the ISP_PORT in Makefile) run 'make isp' and it should compile and then flash the bus manager.
 
 ```
 rsutherland@conversion:~/Samba/RPUadpt/Remote$ make isp
@@ -26,7 +31,7 @@ avrdude done.  Thank you.
 
 The Address '1' on the RPU_BUS is 0x31, (e.g. not 0x1 but the ASCII value for the character).
 
-When DTR (or RTS) toggles from a host connected to the RPU bus the receiving bus manager will set localhost_active and send the bootloader_address over the DTR pair. If an address received by way of the DTR pair matches the local RPU_ADDRESS the bus manager will enter bootloader mode (marked with bootloader_started), and connect the node MCU to the RPU_BUS (see connect_bootload_mode() function), all other address should be locked out. After a LOCKOUT_DELAY time or when a normal mode byte is seen on the DTR pair, the lockout ends and normal mode resumes. The node that has bootloader_started broadcast the return to normal mode byte on the DTR pair when the node reads the RPU_ADDRESS from the bus manager over I2C (otherwise it will time out).
+When HOST_nDTR (or HOST_nRTS) are pulled active from a host trying to connect to the RS-422 bus the local bus manager will set localhost_active and send the bootloader_address over the DTR pair. If an address received by way of the DTR pair matches the local RPU_ADDRESS the bus manager will enter bootloader mode (marked with bootloader_started), and connect the shield RX/TX to the RS-422 (see connect_bootload_mode() function), all other address are locked out. After a LOCKOUT_DELAY time or when a normal mode byte is seen on the DTR pair, the lockout ends and normal mode resumes. The node that has bootloader_started broadcast the return to normal mode byte on the DTR pair when that node has the RPU_ADDRESS read from the bus manager over I2C (otherwise it will time out and not connect the shield RX/TX to RS-422).
 
 
 ## Bus Manager Modes
@@ -48,8 +53,8 @@ The I2C address is 0x29 (dec 41). It is organized as an array of read or write c
 3. write the address that will be sent when DTR/RTS toggles
 4. read RPUpi shutdown (the ICP1 pin has a weak pull up and a momentary switch)
 5. set RPUpi shutdown (pull down ICP1 for SHUTDOWN_TIME in millis to cause host to hault)
-6. reads error status bits [0:DTR readback timeout, 1:twi transmit fail, 2:DTR readback not match, 3:host lockout by I2C]
-7. wrties (or clears) error status 
+6. reads status bits [0:DTR readback timeout, 1:twi transmit fail, 2:DTR readback not match, 3:host lockout]
+7. wrties (or clears) status 
 
 
 Connect to i2c-debug on an RPUno with an RPUftdi shield using picocom (or ilk). 
