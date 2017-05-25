@@ -60,7 +60,7 @@ The I2C address is 0x29 (dec 41). It is organized as an array of read or write c
 Connect to i2c-debug on an RPUno with an RPUftdi shield using picocom (or ilk). 
 
 ``` 
-picocom -b 115200 /dev/ttyUSB0
+picocom -b 38400 /dev/ttyUSB0
 ``` 
 
 
@@ -109,7 +109,7 @@ exit picocom with C-a, C-x.
 Connect with picocom again. 
 
 ``` 
-picocom -b 115200 /dev/ttyUSB0
+picocom -b 38400 /dev/ttyUSB0
 ``` 
 
 This will toggle DTR on the RPUadpt shield which should send 0x32 on the DTR pair. The RPUadpt shield should blink slow to indicate lockout, while the shield with address '2' blinks fast to indicate bootloader mode. The lockout should timeout after LOCKOUT_DELAY that can be adjusted in firmware.
@@ -199,6 +199,6 @@ sudo modprobe ftdi_sio
 # the physcal UART chip will still have DTR/RTS active
 # but picocom can open and release it now to clear the
 # active lines.
-picocom -b 115200 /dev/ttyUSB0
+picocom -b 38400 /dev/ttyUSB0
 # C-a, C-x.
 ``` 
