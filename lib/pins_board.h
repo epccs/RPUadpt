@@ -50,7 +50,6 @@
 #define SCL 19
 
 // these are ADC channels, they do not have digital IO function on ATmega328p
-#define IOREF_ADC6 6
-#define VIN_ADC7 7
+#define 5V_ADC6 6
 
 #endif // Pins_Board_h

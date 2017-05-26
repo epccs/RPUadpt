@@ -61,7 +61,7 @@ static const Pin_Map pinMap[NUM_DIGITAL_PINS] = {
     [5] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD5 }, // {21} T1 OC0B [TX_DE]
     [6] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD6 }, // {22} OC0A [DTR_nRE]
     [7] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD7 }, // {23} [DTR_DE]
-    [8] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB0 }, // {0} ICP1
+    [8] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB0 }, // {0} ICP1 [SHUTDWN]
     [9] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB1 }, // {1} OC1A [LED_BUILTIN]
     [10] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB2 }, // {2} nSS OC1B [nSS]
     [11] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB3 }, // {3} MOSI OC2A [MOSI]
