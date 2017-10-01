@@ -4,8 +4,10 @@ From <https://github.com/epccs/RPUadpt/>
 
 ## Overview
 
-Shield used to connect a microcontroler to a full duplex RS-422 (RX and TX pairs) and an out of band half duplex RS-485 (DTR pair) over CAT5. Its a multidrop bus between a host (e.g. Pi Zero on [RPUpi] or desktop with [RPUftdi]) and an MCU board (e.g. [RPUno]).
+Shield used to connect a controller board to full duplex RS-422 (RX and TX pairs). An out of band half duplex RS-485 (DTR pair) is used for management. CAT5 with RJ-45 connectors is used to run the pairs. It results in a multidrop bus between a host (e.g. Pi Zero on [RPUpi] or desktop with [RPUftdi]) and a controller board (e.g. [RPUno]).
 
+[RPUpi]: https://github.com/epccs/RPUpi
+[RPUftdi]: https://github.com/epccs/RPUftdi
 [RPUno]: https://github.com/epccs/RPUno
 
 [Forum](http://rpubus.org/bb/viewforum.php?f=7)
@@ -18,7 +20,7 @@ Available through [Tindie](https://www.tindie.com/products/ron-sutherland/rpuadp
 
 ![Status](./Hardware/status_icon.png "Status")
 
-This shield is programmed with an in-circuit serial programming tool that is able to do a 3.3V ATmega328p target. I use an Arduino Uno with the [ArduinoISP] sketch and an SPI level shifter (e.g. [ICSP]).
+This shield is programmed with an in-circuit serial programming tool that is able to handle the 3.3V ATmega328p target. I use an Arduino Uno with the [ArduinoISP] sketch and an SPI level shifter (e.g. [ICSP]). A Raspberry Pi should also work with the avrdude bit-bang (-c linuxgpio) or SPI (-c linuxspi) modes.
 
 [ICSP]: https://github.com/epccs/Driver/tree/master/ICSP
 
@@ -31,10 +33,8 @@ Hardware files and notes for referance.
 
 ## Example
 
-A multi-drop serial bus allows multiple microcontroller boards to be connected to a host serial port. The host computer crossover occurs on an [RPUftdi] or [RPUpi] shield. The host and microcontrollers control the transceivers differential driver automatically, which means no software [magic] is needed, though only one microcontroller should be allowed to talk. 
+This multi-drop serial bus allows multiple controller boards to be connected to a host serial port (UART). Crossover of the serial from the host computer occurs as it enters the transceivers on the shield. The differential pair from the transceives is lacking a crossover between the controllers, so all the controllers see the same data on there receive line. The transceivers differential driver is automatically enabled when a UART pulls its output low, which means no software [magic] is needed to operate a push to talk based system, though it is up to the user software to ensure the controllers talk in a reasonable way. 
 
-[RPUpi]: https://github.com/epccs/RPUpi
-[RPUftdi]: https://github.com/epccs/RPUftdi
 [magic]: https://github.com/pyserial/pyserial/blob/master/serial/rs485.py
 
 ![MultiDrop](./Hardware/Documents/MultiDrop.png "MultiDrop")
@@ -47,10 +47,9 @@ When PySerial on the host opens the serial port it pulls the nDTR line low (it i
 
 [Host2Remote]: https://github.com/epccs/RPUftdi/tree/master/Host2Remote
 
-When avrdude opens the serial port it pulls the nDTR line low and the manager broadcast the bootload address which places everything in lockout except the host and the microcontroller board that was addressed. The address is held in the manager on the RPUadpt shield which is running [Remote] firmware. Replacing the [RPUno] dos not change the address of the location, but replacing the RPUadpt or modify its address (by I2C) does.
+When avrdude opens the serial port it pulls the nDTR line low (nRTS is used on Raspberry Pi). The manager broadcast the bootload address when it sees nDTR (or nRTS) set active which places everything in lockout except the host and the controller board that was addressed. The address is held in the manager on the RPUadpt shield which is running [Remote] firmware. Replacing the [RPUno] dos not change the address of the location, but replacing the RPUadpt or changing its address (by I2C) does.
 
 [Remote]: ./Remote
-
 
 
 ## AVR toolchain
