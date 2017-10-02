@@ -9,6 +9,7 @@ Shield used to connect a controller board to full duplex RS-422 (RX and TX pairs
 [RPUpi]: https://github.com/epccs/RPUpi
 [RPUftdi]: https://github.com/epccs/RPUftdi
 [RPUno]: https://github.com/epccs/RPUno
+[Irrigate7]: https://github.com/epccs/Irrigate7
 
 [Forum](http://rpubus.org/bb/viewforum.php?f=7)
 
@@ -33,23 +34,25 @@ Hardware files and notes for referance.
 
 ## Example
 
-This multi-drop serial bus allows multiple controller boards to be connected to a host serial port (UART). Crossover of the serial from the host computer occurs as it enters the transceivers on the shield. The differential pair from the transceives is lacking a crossover between the controllers, so all the controllers see the same data on there receive line. The transceivers differential driver is automatically enabled when a UART pulls its output low, which means no software [magic] is needed to operate a push to talk based system, though it is up to the user software to ensure the controllers talk in a reasonable way. 
+This multi-drop serial bus allows multiple controller boards to be connected to a host serial port (UART). Crossover of the serial from the host computer occurs as it enters the transceivers on the shield. The differential pair from the transceives is run through a patch cable (CAT5) between the controllers, so all the controllers see the same interface. The transceivers differential driver is automatically enabled when a UART pulls its output low, which means no software [magic] is needed to operate a push to talk based system, though it is up to the user software to ensure the controllers talk in a reasonable way (e.g. without collision). The bus is also difficult to damage since the transceivers can't cross conduct while trying to drive a differential pair (e.g. when multiple devices with the same address answer, or more likely my firmware is barking at the shadows).
 
 [magic]: https://github.com/pyserial/pyserial/blob/master/serial/rs485.py
 
 ![MultiDrop](./Hardware/Documents/MultiDrop.png "MultiDrop")
 
-In the examples, for [RPUno] a command processor is used to accept interactive textual commands and operate the peripherals. The examples have a simple makefile that compiles the microcontroller firmware from the source. The host I used has Ubuntu (or Raspbian) with the AVR toolchain installed.
+In the above drawing, the computer can communicate with the three controller boards (a [RPUno] and two [Irrigate7]). The RPUno needs to be located near the computer since the USB cables are short but the other boards can be a significate distance away (perhaps over 1000 meters). Note: Irrigate7 is a work in progress at the time of this writing.
 
-The RPUno examples have a makefile with a bootload rule (e.g. "make bootload") that uploads to the targets bootloader using avrdude.
+In my firmware examples (e.g. for [RPUno]), a command processor is used to accept interactive textual commands over the wired interface and operate the peripherals. The examples have a simple makefile that compiles the microcontroller firmware from the source. The host computers I use have the AVR toolchain from Debian installed and can upload that firmware over the wired interface with the available opensource tools. 
 
-When PySerial on the host opens the serial port it pulls the nDTR line low (it is active low) and that tells the [RPUftdi] manager running [Host2Remote] firmware to reset the bootload address. PySerial needs to wait for a few seconds while the bootloader timeout finishes just like with an Arduino Uno, and is the same reason (e.g. on RS232 the same bootloader timeout is needed).
+The firmware examples use a makefile with a bootload rule (e.g. "make bootload") that uploads to the targets bootloader. Building without a rule does the expected thing almost,  it compiles the firmware into a relocatable elf as expected but turns that into an Intel formate hex file, the bootload rule just feeds that to the uploader tool. 
+
+When PySerial (or the toolchain uploader tool) on the host opens the serial port it pulls the nDTR and nRTS line low (they are active low) and that tells the [RPUftdi] manager running [Host2Remote] firmware to reset the bootload address. PySerial needs to wait for a few seconds while the bootloader timeout finishes (just like with an Arduino Uno).
 
 [Host2Remote]: https://github.com/epccs/RPUftdi/tree/master/Host2Remote
 
-When avrdude opens the serial port it pulls the nDTR line low (nRTS is used on Raspberry Pi). The manager broadcast the bootload address when it sees nDTR (or nRTS) set active which places everything in lockout except the host and the controller board that was addressed. The address is held in the manager on the RPUadpt shield which is running [Remote] firmware. Replacing the [RPUno] dos not change the address of the location, but replacing the RPUadpt or changing its address (by I2C) does.
+When the toolchain uploader tool (avrdude) opens the serial port it pulls the nDTR and nRTS lines low. The manager with the host connected sees this and broadcast a bootload address. When the managers see the address on the management pair (including the local) they place everything in lockout except the host (e.g. localhost_active) and the controller board that has the addressed manager mounted. Again the address is held in the manager on the shield which is running the firmware (e.g. [Remote]). Replacing the controller (e.g. [RPUno]) dos not change the address of the location, but replacing the shield does (the address on the shield may be programmed).
 
-[Remote]: ./Remote
+[Remote]: https://github.com/epccs/RPUadpt/tree/master/Remote
 
 
 ## AVR toolchain
