@@ -121,7 +121,7 @@ Y. | [BRD] [SMD] [HDR] [CAT5]
 
 ## ICSP
 
-[ArduinoISP] sketch on an [Uno] with a SPI level converter is the [ICSP] tool I use to program the bus manager with the [Remote] example firmware. I then plug the RPUadpt into an RPUno and load some application firmware (e.g. [Solenoid] with [K3]). An RPUftdi and Uno clone can be used with a host to communicate with the RPUadpt and its RPUno. Additional boards will need the [Remote] firmware to have the rpu_bus address set in EEPROM.
+[ArduinoISP] sketch is on an [Uno] and a level converter (e.g. [ICSP]) is between the boards. I then run the build rule (e.g. "make isp") to program the bus manager with the [Remote] firmware. With that, I can plug the RPUadpt into an RPUno and serial bootload the controller firmware (e.g. [Solenoid] with [K3]). An RPUftdi and Uno clone can be used with a host to communicate with the RPUadpt and its controller board. Additional boards will need the [Remote] firmware to have the bus address set in EEPROM.
 
 [ArduinoISP]: https://github.com/arduino/Arduino/blob/master/build/shared/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino
 [Uno]: https://www.adafruit.com/product/50

@@ -37,7 +37,7 @@ Hardware files and notes for referance.
 
 This multi-drop serial bus allows multiple controller boards to be connected to a host serial port (UART). Crossover of the serial from the host computer occurs as it enters the transceivers on the shield. The differential pair from the transceives is run through patch cables (CAT5) between the controllers, so all the controllers see the same interface. 
 
-The transceivers differential driver is enabled when a UART pulls its TX output low, which means no software [magic] is needed to operate the push to talk of the transceivers, though it is up to the user software to ensure the controllers talk in a reasonable way (e.g. without collision). Since the drivers in the transceivers only output an inverted level they can't cross conduct thus collisions don't damage the hardware. I see collisions when antecedently connecting two shields with the same address and both try to answer.
+The transceivers differential driver is enabled when a UART pulls its TX output low, which means no software [magic] is needed to operate the push to talk of the transceivers, though it is up to the user software to ensure the controllers talk in a reasonable way (e.g. without collision). Since the drivers in the transceivers only output an inverted level they can't cross conduct thus collisions don't damage the hardware. I see collisions when accidentally connecting two shields with the same address and both try to answer.
 
 [magic]: https://github.com/pyserial/pyserial/blob/master/serial/rs485.py
 
@@ -45,7 +45,7 @@ The transceivers differential driver is enabled when a UART pulls its TX output 
 
 In the above drawing, the computer can communicate with the three controller boards (an [RPUno], an [Irrigate7], and a [Punica]). The computer connected with USB to the RPUftdi shield can access the controller boards when the manager allows. The Raspberry Pi can also access the controller boards when the manager allows. Only one host computer should access the serial bus at a time. The RS-422 can be run a significate distance (perhaps over 1000 meters). 
 
-In my firmware examples (e.g. see[RPUno]), a command processor is used to accept textual commands over the wired interface. The examples have a simple makefile that compiles the microcontroller firmware from the source. The host computers I use have the AVR toolchain from Debian installed and can compile and upload that firmware over the RS-422 serial interface with the proper tool (avrdude) in that toolchain. 
+In my firmware examples (e.g. see [RPUno]) a command processor is used to accept textual commands over the wired interface. The examples have a simple makefile that compiles the microcontroller firmware from the source. The host computers I use have the AVR toolchain from Debian installed and can compile and upload that firmware over the RS-422 serial interface with the proper tool (avrdude) in that toolchain. 
 
 The firmware examples use a makefile with a bootload rule (e.g. "make bootload") that uploads to the targets bootloader. Building without a rule (e.g. "make") compiles the firmware into a relocatable elf as expected but turns that into an Intel formate hex file, the bootload rule just sends that to the uploader tool. 
 
