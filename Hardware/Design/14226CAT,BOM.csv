@@ -1,0 +1,12 @@
+LINE, REF, QTY, EPCCS TYP, EPCCS PN, MFG@PN, DESCRIPTION, NOTES, COST EA, LINE COST,BIN
+,,,,,,RPUadpt CAT5 Term,,,TOTAL,
+,,,,,,11/15/17 (14226^6),,,=SUM(J7:J100)
+,,,,,,,,,,
+1,,3,R-MF,18FD100R,STACKPOLE@RNF18FTD100R,RES METAL FILM  1% 100ROHM,(1 4),0.0171,=C5*I5,ADPT
+2,,1,J-RJ45,RJ45P,WSW@A-MO 8/8 F50,PLUG 8P8C,(1 4),0.2852,=C6*I6,ADPT
+,,,,,,,,,,
+,,,,,,NOTES,,,,
+,,,,,,(1) Alternate part with same or better rating allowed,,,,
+,,,,,,(4) bus termination,,,,
+
+
