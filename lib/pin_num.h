@@ -41,7 +41,8 @@ typedef struct {
   uint8_t bit;  
 } Pin_Map;
 
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328P__)
+// the device-specs provide the define, so use "avr-gcc -B" to provide one for the 328pb if it is not in mainline
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega328PB__)
 
 #define NUM_DIGITAL_PINS 20
 

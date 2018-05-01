@@ -18,7 +18,7 @@ Shield used to connect a controller board to full duplex RS-422 (RX and TX pairs
 
 ## Status
 
-Available through [Tindie](https://www.tindie.com/products/ron-sutherland/rpuadpt-a-shield-for-rs-422-over-cat5/)
+Available through [Tindie](https://www.tindie.com/products/8833/)
 
 ![Status](./Hardware/status_icon.png "Status")
 
