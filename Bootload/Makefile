@@ -20,14 +20,21 @@ $(TARGET):
 # 2v7 B.O.D. Enabled       note extended fuse value 0x05 is same as 0xFD since bits 3 thru 7 are hardware locked
 
 ## http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega328p&LOW=FF&HIGH=D6&EXTENDED=05&LOCKBIT=3F
-## stk500v1 is for Arduino as ISP (e.g. it is an example in the Arduino.cc IDE 1.6.7+)
+## stk500v1 is for Arduino as ISP (e.g. an example in the Arduino.cc IDE 1.6.7+) that mounts at /dev/ttyACM0
+## if atmega328pb is not in mainline use
 fuse: 
-	avrdude -v -p atmega328p -c stk500v1 -P /dev/ttyACM0 -b 19200 -e -U lock:w:0x3F:m -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0xFD:m
-
+	avrdude -v -C +../lib/avrdude/328pb.conf -p atmega328pb -c stk500v1 -P /dev/ttyACM0 -b 19200 -e -U lock:w:0x3F:m -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0xFD:m
 read: 
-	avrdude -v -p atmega328p -c stk500v1 -P /dev/ttyACM0 -b 19200 -U lock:r:0x3F:m -U lfuse:r:0xFF:m -U hfuse:r:0xD6:m -U efuse:r:0xFD:m
+	avrdude -v -C +../lib/avrdude/328pb.conf -p atmega328pb -c stk500v1 -P /dev/ttyACM0 -b 19200 -U lock:r:0x3F:m -U lfuse:r:0xFF:m -U hfuse:r:0xD6:m -U efuse:r:0xFD:m
+## if atmega328pb is in mainline use
+#fuse: 
+#	avrdude -v -p atmega328pb -c stk500v1 -P /dev/ttyACM0 -b 19200 -e -U lock:w:0x3F:m -U lfuse:w:0xFF:m -U hfuse:w:0xD6:m -U efuse:w:0xFD:m
+#read: 
+#	avrdude -v -p atmega328pb -c stk500v1 -P /dev/ttyACM0 -b 19200 -U lock:r:0x3F:m -U lfuse:r:0xFF:m -U hfuse:r:0xD6:m -U efuse:r:0xFD:m
 
-# note this is the old setting I used befor switching to the crystal.
+# 328pb fuse setting is same as 328p
+
+# note this is the old setting I used befor using the crystal.
 # 8MHz internal
 # BOOTRST programmed so boot reset vector is enabled (in case a bootloader is added)
 # 2v7 B.O.D. Enabled       note extended fuse value 0x05 is same as 0xFD since bits 3 thru 7 are hardware locked

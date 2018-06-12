@@ -27,9 +27,9 @@ CFLAGS = -Os -g -std=gnu99 -Wall
 # CFLAGS += -fpack-struct -fshort-enums 
 CFLAGS += -ffunction-sections -fdata-sections 
 
-## if atmega328pb is not in mainline use
+## if atmega328pb is not in avr-gcc mainline use
 TARGET_ARCH = -mmcu=$(MCU) -B $(LIBDIR)/Atmel.ATmega_DFP.1.2.209.atpack/gcc/dev/atmega328pb/ -I $(LIBDIR)/Atmel.ATmega_DFP.1.2.209.atpack/include/
-## if atmega328pb is in mainline use
+## if atmega328pb is in avr-gcc mainline use
 ##TARGET_ARCH = -mmcu=$(MCU)
 
 
@@ -48,8 +48,12 @@ $(TARGET).hex: $(TARGET).elf
 ## to reduce dupliction I only show the fuse setting in ../Bootloader
 
 ## lock the bootloader section, in case it is used some day
+## if atmega328pb is not in /etc/avrdude.conf
 isp: $(TARGET).hex
 	avrdude -v -p $(MCU) -C +$(LIBDIR)/avrdude/328pb.conf -c stk500v1 -P $(ISP_PORT) -b 19200 -e -U flash:w:$(TARGET).hex -U lock:w:0x2f:m
+## if atmega328pb is in /etc/avrdude.conf
+#isp: $(TARGET).hex
+#	avrdude -v -p $(MCU) -c stk500v1 -P $(ISP_PORT) -b 19200 -e -U flash:w:$(TARGET).hex -U lock:w:0x2f:m
 
 $(TARGET).elf: $(OBJECTS)
 	$(CC) $(LDFLAGS) $(TARGET_ARCH) $^ -o $@
