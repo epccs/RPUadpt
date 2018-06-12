@@ -59,7 +59,7 @@ The manager can see (nDTR and nRTS) the host try to connect and if it is not blo
 
 ## AVR toolchain
 
-The core files for this board are in the /lib folder. Each example has its files and a Makefile in its own folder. The toolchain packages that I use are available on Ubuntu and Raspbian. 
+The core files for this board are in the /lib folder. Each example has its files and a Makefile in its own folder. The toolchain packages that I use are available on Debain, Ubuntu and Raspbian. 
 
 ```
 sudo apt-get install git gcc-avr binutils-avr gdb-avr avr-libc avrdude
@@ -71,3 +71,7 @@ git clone https://github.com/epccs/RPUadpt
 * [gdb-avr](http://packages.ubuntu.com/search?keywords=gdb-avr)
 * [avr-libc](http://packages.ubuntu.com/search?keywords=avr-libc)
 * [avrdude](http://packages.ubuntu.com/search?keywords=avrdude)
+
+The ATmega328pb are not in mainline, so the files from Atmel [atpack] (DFP.1.2.209.atpack) are included in this repo for use with avr-gcc (GCC) 5.4.0. At the time of this writing Raspbian has avr-gcc (GCC) 4.9.2 which does not support the atpack files.
+
+[atpack]: http://packs.download.atmel.com/

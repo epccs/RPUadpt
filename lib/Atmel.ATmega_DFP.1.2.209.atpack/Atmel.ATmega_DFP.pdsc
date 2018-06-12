@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:saxon="http://saxon.sf.net//"
+         schemaVersion="1.3"
+         xs:schemaLocation="http://www.atmel.com/schemas/pack-device-atmel-extension PACK.DEVICE.ATMEL.EXTENSION.xsd"
+         xs:noNamespaceSchemaLocation="PACK.ATMEL.xsd">
+   <vendor>Atmel</vendor>
+   <url>http://packs.download.atmel.com/</url>
+   <name>ATmega_DFP</name>
+   <description>Atmel ATmega Series Device Support</description>
+   <releases>
+      <release version="1.2.209" date="2018-02-19">Corrected reset pin configurations and changed PORTMUX signal names for ATmega4809, ATmega4808, ATmega3209 and ATmega3208. Corrected TWI0 pins on mega324PB.</release>
+      <release version="1.2.203" date="2017-12-15">Corrected register names for ATmega4809, ATmega4808, ATmega3209 and ATmega3208.</release>
+      <release version="1.2.150" date="2017-09-27">Remove no-ascii characters from iomxx4.h. Added ATmega4809, ATmega4808, ATmega3209 and ATmega3208.</release>
+      <release version="1.2.132" date="2016-12-14">Fix ACSRB location for ATmega44|88|168|328PB. Fix sleep mode values for ATmega16|16A. Update signals info for ATmega324|328PB. Update ADC MUX config values for most devices.</release>
+      <release version="1.1.130" date="2016-09-18">Fix bitfields of PRR registers for PWM devices. Remove XDIV in ATmega128. Update CFD fuse for ATmega328PB.</release>
+      <release version="1.0.118" date="2016-06-17">Update ATDF files with various information required for support in Start.</release>
+      <release version="1.0.106" date="2016-04-25">Fix bitfield and register name issues for all 'Timer/Counter, 16-bit' for ATmega324PB.</release>
+      <release version="1.0.105" date="2016-04-13">Add PCINT[0,7] to ATmega2564 IO header.</release>
+      <release version="1.0.98" date="2016-02-18">Removed Full-Swing Crystal field for SUT_CKSEL of ATmega PB devices. Updated documentation links.</release>
+      <release version="1.0.91" date="2015-11-13">Initial release.</release>
+      <release version="1.0.90" date="2015-09-25">Preview.</release>
+   </releases>
+   <nix_the_non-swag>Not swag</nix_the_non-swag>
+ </package>

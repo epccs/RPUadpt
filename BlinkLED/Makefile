@@ -27,8 +27,11 @@ CFLAGS = -Os -g -std=gnu99 -Wall
 # CFLAGS += -fpack-struct -fshort-enums 
 CFLAGS += -ffunction-sections -fdata-sections 
 
-## atmega328pb is not in mainline
-TARGET_ARCH = -mmcu=$(MCU) -B $(LIBDIR)/Atmel.ATmega_DFP.1.2.150.atpack/gcc/dev/atmega328pb/ -I $(LIBDIR)/Atmel.ATmega_DFP.1.2.150.atpack/include/
+## if atmega328pb is not in mainline use
+TARGET_ARCH = -mmcu=$(MCU) -B $(LIBDIR)/Atmel.ATmega_DFP.1.2.209.atpack/gcc/dev/atmega328pb/ -I $(LIBDIR)/Atmel.ATmega_DFP.1.2.209.atpack/include/
+## if atmega328pb is in mainline use
+##TARGET_ARCH = -mmcu=$(MCU)
+
 
 LDFLAGS = -Wl,-Map,$(TARGET).map 
 LDFLAGS += -Wl,--gc-sections 
