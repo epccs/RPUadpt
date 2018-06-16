@@ -4,10 +4,18 @@ From <https://github.com/epccs/RPUadpt/>
 
 ## Overview
 
-Shield used to connect a controller board to full duplex RS-422 (RX and TX pairs) and an out of band half duplex RS-485 (DTR pair) used for management. Modular 8P8C connectors allow RJ-45 connectors on CAT5 to run the pairs between shields. The result is a multidrop bus between a host (e.g. Pi Zero on [RPUpi], desktop with [RPUftdi], or a Pi3 with this RPUadpt shield) and a controller board (e.g. [RPUno], [Irrigate7], or [Punica]).
+Shield used to connect a controller board to a multi-drop serial with [RPUbus] style connections. Modular 8P8C connectors allow RJ-45 connectors for CAT5 to run the differential pairs between locations. The result allows a host computer (e.g. Pi Zero with[RPUpi], or desktop with [USBuart]) to have a serial interface with the controller board that can bootload with the familiar upload tools.
 
+[RPUbus]: http://rpubus.org/
+[USBuart]: https://github.com/epccs/Driver/tree/master/USBuart
 [RPUpi]: https://github.com/epccs/RPUpi
-[RPUftdi]: https://github.com/epccs/RPUftdi
+
+An SPI interface with a level shifting buffer is available between the controller and computer. SPI is also wired to an optional header for a slave device (e.g. an [SD card]) that the controller can access. 
+
+[SD card]: https://www.adafruit.com/product/254
+
+I2C between the manager and the controller allows the user program to read an address and make the serial connection active.
+
 [RPUno]: https://github.com/epccs/RPUno
 [Irrigate7]: https://github.com/epccs/Irrigate7
 [Punica]: https://github.com/epccs/Punica
