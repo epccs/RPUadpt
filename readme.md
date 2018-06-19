@@ -4,7 +4,7 @@ From <https://github.com/epccs/RPUadpt/>
 
 ## Overview
 
-Shield used to connect a controller board to a multi-drop serial with [RPUbus] style connections. Modular 8P8C connectors allow RJ-45 connectors for CAT5 to run the differential pairs between locations. The result allows a host computer (e.g. Pi Zero with[RPUpi], or desktop with [USBuart]) to have a serial interface with the controller board that can bootload with the familiar upload tools.
+Shield used to connect a controller board to a multi-drop serial bus (e.g. [RPUbus]). Modular 8P8C connectors allow RJ-45 connectors and CAT5 to run the differential pairs between locations. The robust noise immunity of the differential pairs allows a host computer (e.g. Pi Zero with [RPUpi], or desktop with [USBuart]) to interface with and bootload the controller board(s) in noisy environments over serial hardware that can be physically secured.
 
 [RPUbus]: http://rpubus.org/
 [USBuart]: https://github.com/epccs/Driver/tree/master/USBuart
@@ -53,7 +53,7 @@ The transceivers differential driver is enabled when a UART pulls its TX output 
 
 In the above drawing, the computer can communicate with the three controller boards (an [RPUno], an [Irrigate7], and a [Punica]). The computer connected with USB to the RPUftdi shield can access the controller boards when the manager allows. The Raspberry Pi can also access the controller boards when the manager allows. Only one host computer should access the serial bus at a time. The RS-422 can be run a significate distance (perhaps over 1000 meters). 
 
-In my firmware examples (e.g. see [RPUno]) a command processor is used to accept textual commands over the wired interface. The examples have a simple makefile that compiles the microcontroller firmware from the source. The host computers I use have the AVR toolchain from Debian installed and can compile and upload that firmware over the RS-422 serial interface with the proper tool (avrdude) in that toolchain. 
+In my firmware examples (e.g. see [RPUno]) a command processor is used to accept textual commands over the wired interface. The examples have a simple makefile that compiles the microcontroller firmware from the source. The host computers I use have the AVR toolchain from Debian installed and can compile and upload that firmware over the serial interface with the uploader tool (avrdude). 
 
 The firmware examples use a makefile with a bootload rule (e.g. "make bootload") that uploads to the targets bootloader. Building without a rule (e.g. "make") compiles the firmware into a relocatable elf as expected but turns that into an Intel formate hex file, the bootload rule just sends that to the uploader tool. 
 
@@ -63,6 +63,10 @@ When the serial port on the host opens (e.g. PySerial, picocom, or the toolchain
 [Host2Remote]: https://github.com/epccs/RPUftdi/tree/master/Host2Remote
 
 The manager can see (nDTR and nRTS) the host try to connect and if it is not blocked by another host will broadcast a bootload address. When the managers see the address on the DTR pair (note the local manager will also see it) then everything sets lockout_active except if the localhost_active is set then the host remains connected and also the addressed manager remains connected and sets bootloader_started. Again the address is in the manager on the shield, so the address follows the shield. Replacing the controller (e.g. swapping an [RPUno] with an [Irrigate7]) does not change the address, but replacing the shield does (the address on the shield may be programmed).
+
+^6 has an ATmega328pb with a second I2C port, one for the control board and the other for the host. The details of how the host will use it are not yet known. Only the single board computers with Linux (e.g. Raspberry Pi) can do things with I2C at a reasonable price. For the host, I will probably expose the commands to read the local address and set the bootload address. If the host reads the local address then sneaky mode should probably end with a normal mode broadcast on the DTR pair (but that is TBD). 
+
+^6 also has some SPI options that need to be tested, but until an evaluation is done using it is at your own risk.
 
 
 ## AVR toolchain

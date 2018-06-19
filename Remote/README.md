@@ -1,14 +1,14 @@
 # Remote
 
-This bus manager firmware is for an RPUadpt board, it will watch for a byte matching the local RPU_ADDRESS on the DTR pair and when seen reset the local MCU board placing it in bootloader mode. A non-matching byte will disconnect RS-422 from the RX and TX to the shield headers placing it in lockout mode.
+This firmware is for the bus manager on an RPUadpt board, it will watch for a byte matching the local RPU_ADDRESS on the DTR pair and when seen reset the local MCU board placing it in bootloader mode. A non-matching byte will disconnect the RX and TX lines to the MCU board shield headers and thus be placing in lockout mode until a LOCKOUT_DELAY completes or a RPU_NORMAL_MODE byte is seen on the DTR pair.
 
 ## Overview
 
-In normal mode, the RS-422 pairs RX and TX are connected to the shield RX and TX pins. While the RS-485 (DTR) pair is connected to the bus manager UART and used to set the system-wide bus state.
+In normal mode, the serial pairs RX and TX are connected through tranceivers to the MCU board RX and TX pins. While the DTR pair is connected to the bus manager UART and used to set the system-wide bus state.
 
-Durring lockout mode the RS-422 pairs RX and TX are disconnected from the shield RX and TX pins.
+Durring lockout mode the serial pairs RX and TX are disconnected at the tranceivers from the MCU board RX and TX pins.
 
-Bootload mode occures when a byte on the DTR pair matches the RPU_ADDRESS of the shield. It will cause a pulse on the shield reset pin to activate the bootloader on the board the shield is pluged into. After bootloading is done the shield will send the RPU_NORMAL_MODE byte on the DTR pair when the RPU_ADDRESS is read with an I2C command (otherwise the shield will timeout but not connect to the RS-422 bus).
+Bootload mode occures when a byte on the DTR pair matches the RPU_ADDRESS of the shield. It will cause a pulse on the shield reset pin to activate the bootloader on the board the shield is pluged into. After bootloading is done the shield will send the RPU_NORMAL_MODE byte on the DTR pair when the RPU_ADDRESS is read with an I2C command from the MCU board (otherwise the shield will timeout but not connect to the tranceivers to the MCU board RX and TX pins).
 
 lockout mode occures when a byte on the DTR pair does not match the RPU_ADDRESS of shield. It will cause the lockout condition and last for a duration determined by the LOCKOUT_DELAY or when a RPU_NORMAL_MODE byte is seen on the DTR pair.
 

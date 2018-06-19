@@ -50,7 +50,7 @@ $(TARGET).hex: $(TARGET).elf
 ## lock the bootloader section, in case it is used some day
 ## if atmega328pb is not in /etc/avrdude.conf
 isp: $(TARGET).hex
-	avrdude -v -p $(MCU) -C +$(LIBDIR)/avrdude/328pb.conf -c stk500v1 -P $(ISP_PORT) -b 19200 -e -U flash:w:$(TARGET).hex -U lock:w:0x2f:m
+	avrdude -v -p $(MCU) -C +$(LIBDIR)/avrdude/328pb.conf -c stk500v1 -P $(ISP_PORT) -b 19200 -e -U flash:w:$(TARGET).hex -U lock:w:0xef:m
 ## if atmega328pb is in /etc/avrdude.conf
 #isp: $(TARGET).hex
 #	avrdude -v -p $(MCU) -c stk500v1 -P $(ISP_PORT) -b 19200 -e -U flash:w:$(TARGET).hex -U lock:w:0x2f:m

@@ -18,7 +18,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 #include <avr/eeprom.h> 
 #include <avr/pgmspace.h>
 #include "../lib/timers.h"
-#include "../lib/twi.h"
+#include "../lib/twi0.h"
 #include "../lib/uart.h"
 #include "../lib/pin_num.h"
 #include "../lib/pins_board.h"
@@ -29,7 +29,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 // RPU_HOST_CONNECT is defined in the Makefile and is used as default address sent on DTR pair if FTDI_nDTR toggles
 // byte broadcast on DTR pair when HOST_nDTR (or HOST_nRTS) is no longer active
 #define RPU_HOST_DISCONNECT ~RPU_HOST_CONNECT
-// return to normal mode address sent on DTR pair (haha... no it is not oFF it is a hex value)
+// return to normal mode address sent on DTR pair
 #define RPU_NORMAL_MODE 0x00
 // disconnect and set error mode on DTR pair
 #define RPU_ERROR_MODE 0xFF
@@ -49,16 +49,16 @@ const uint8_t EE_IdTable[] PROGMEM =
 #define EE_RPU_ID 40
 #define EE_RPU_ADDRESS 50
 
-static uint8_t i2cBuffer[TWI_BUFFER_LENGTH];
+static uint8_t i2cBuffer[TWI0_BUFFER_LENGTH];
 static uint8_t i2cBufferLength = 0;
 
-#define BOOTLOADER_ACTIVE 25000
+#define BOOTLOADER_ACTIVE 115000
 #define BLINK_BOOTLD_DELAY 75
 #define BLINK_ACTIVE_DELAY 500
 #define BLINK_LOCKOUT_DELAY 2000
 #define BLINK_STATUS_DELAY 200
 #define UART_TTL 500
-#define LOCKOUT_DELAY 30000
+#define LOCKOUT_DELAY 120000
 #define SHUTDOWN_TIME 1000
 
 static unsigned long blink_started_at;
@@ -82,7 +82,7 @@ static uint8_t shutdown_started;
 
 // status_byt bits
 #define DTR_READBACK_TIMEOUT 0
-#define DTR_TWI_TRANSMIT_FAIL 1
+#define DTR_I2C_TRANSMIT_FAIL 1
 #define DTR_READBACK_NOT_MATCH 2
 #define HOST_LOCKOUT_STATUS 3
 
@@ -90,21 +90,21 @@ volatile uint8_t status_byt;
 volatile uint8_t uart_output;
 
 // I2C Commands
-#define TWI_COMMAND_TO_READ_RPU_ADDRESS 0
-#define TWI_COMMAND_TO_SET_RPU_ADDRESS 1
-#define TWI_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR 2
-#define TWI_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR 3
-#define TWI_COMMAND_TO_READ_SW_SHUTDOWN_DETECTED 4
-#define TWI_COMMAND_TO_SET_SW_FOR_SHUTDOWN 5
-#define TWI_COMMAND_TO_READ_STATUS 6
-#define TWI_COMMAND_TO_SET_STATUS 7
+#define I2C_COMMAND_TO_READ_RPU_ADDRESS 0
+#define I2C_COMMAND_TO_SET_RPU_ADDRESS 1
+#define I2C_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR 2
+#define I2C_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR 3
+#define I2C_COMMAND_TO_READ_SW_SHUTDOWN_DETECTED 4
+#define I2C_COMMAND_TO_SET_SW_FOR_SHUTDOWN 5
+#define I2C_COMMAND_TO_READ_STATUS 6
+#define I2C_COMMAND_TO_SET_STATUS 7
 
 
 // called when I2C data is received. 
-void receiveEvent(uint8_t* inBytes, int numBytes) 
+void receive0_event(uint8_t* inBytes, int numBytes) 
 {
    
-    // This buffer will echo's back with slaveTransmit()
+    // This buffer will echo's back with transmit0_event()
     for(uint8_t i = 0; i < numBytes; ++i)
     {
         i2cBuffer[i] = inBytes[i];    
@@ -112,7 +112,7 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
     i2cBufferLength = numBytes;
     if (i2cBufferLength > 1)
     {
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_READ_RPU_ADDRESS) )
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_RPU_ADDRESS) )
         {
             i2cBuffer[1] = rpu_address; // '1' is 0x31
             local_mcu_is_rpu_aware =1;
@@ -141,26 +141,26 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
                     bootloader_started_at = millis() - BOOTLOADER_ACTIVE;
                 }
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_SET_RPU_ADDRESS) )
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_RPU_ADDRESS) )
         {
             rpu_address = i2cBuffer[1];
             write_rpu_address_to_eeprom = 1;
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR) )
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR) )
         {  // read byte sent when HOST_nDTR toggles
             i2cBuffer[1] = bootloader_address;
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR) ) 
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR) ) 
         { // buffer the byte that is sent when HOST_nDTR toggles
             bootloader_address = i2cBuffer[1];
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_READ_SW_SHUTDOWN_DETECTED) ) 
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_SW_SHUTDOWN_DETECTED) ) 
         { // when ICP1 pin is pulled  down the host (e.g. Pi Zero on RPUpi) should hault
             i2cBuffer[1] = shutdown_detected;
              // reading clears this flag that was set in check_shutdown() but it is up to the I2C master to do somthing about it.
             shutdown_detected = 0;
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_SET_SW_FOR_SHUTDOWN) ) 
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_SW_FOR_SHUTDOWN) ) 
         { // pull ICP1 pin low to hault the host (e.g. Pi Zero on RPUpi)
             if (i2cBuffer[1] == 1)
             {
@@ -174,11 +174,11 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
             }
             // else ignore
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_READ_STATUS) )
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_STATUS) )
         {
             i2cBuffer[1] = status_byt;
         }
-        if ( (i2cBuffer[0] == TWI_COMMAND_TO_SET_STATUS) )
+        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_STATUS) )
         {
             status_byt = i2cBuffer[1];
         }
@@ -186,12 +186,12 @@ void receiveEvent(uint8_t* inBytes, int numBytes)
 }
 
 // called when I2C data is requested.
-void slaveTransmit(void) 
+void transmit0_event(void) 
 {
     // respond with an echo of the last message sent
-    uint8_t return_code = twi_transmit(i2cBuffer, i2cBufferLength);
+    uint8_t return_code = twi0_transmit(i2cBuffer, i2cBufferLength);
     if (return_code != 0)
-        status_byt &= (1<<DTR_TWI_TRANSMIT_FAIL);
+        status_byt &= (1<<DTR_I2C_TRANSMIT_FAIL);
 }
 
 void connect_normal_mode(void)
@@ -312,10 +312,10 @@ void setup(void)
     /* Initialize UART, it returns a pointer to FILE so redirect of stdin and stdout works*/
     stdout = stdin = uartstream0_init(BAUD);
 
-    twi_setAddress(I2C_ADDRESS);
-    twi_attachSlaveTxEvent(slaveTransmit); // called when I2C data is requested 
-    twi_attachSlaveRxEvent(receiveEvent); // slave receive
-    twi_init(false); // do not use internal pull-up
+    twi0_setAddress(I2C_ADDRESS);
+    twi0_attachSlaveTxEvent(transmit0_event); // called when I2C data is requested 
+    twi0_attachSlaveRxEvent(receive0_event); // slave receive
+    twi0_init(false); // do not use internal pull-up
 
     sei(); // Enable global interrupts to start TIMER0 and UART
     
