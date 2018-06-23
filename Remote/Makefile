@@ -28,6 +28,7 @@ CPPFLAGS += -DHOST_LOCKOUT=1
 ## Cross-compilation
 CC = avr-gcc
 OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
 SIZE = avr-size
 
 ## Uno with Arduino as ISP sketch shows as ttyACMx
@@ -46,13 +47,12 @@ TARGET_ARCH = -mmcu=$(MCU) -B $(LIBDIR)/Atmel.ATmega_DFP.1.2.209.atpack/gcc/dev/
 LDFLAGS = -Wl,-Map,$(TARGET).map 
 LDFLAGS += -Wl,--gc-sections 
 
-all: $(TARGET).hex
+all: $(TARGET).hex $(TARGET).lst
 
 $(TARGET): $(TARGET).hex
 
 $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
-	rm -f $(TARGET).elf
 
 ## http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega328p&LOW=FF&HIGH=DE&EXTENDED=05&LOCKBIT=2F
 ## stk500v1 is for Arduino as ISP (e.g. it is an example in the Arduino.cc IDE 1.6.7+)
@@ -69,5 +69,7 @@ $(TARGET).elf: $(OBJECTS)
 	rm -f $(TARGET).o $(OBJECTS)
 
 clean: 
-	rm -f $(TARGET).hex $(TARGET).map
+	rm -f $(TARGET).hex $(TARGET).map $(TARGET).elf $(TARGET).lst
  
+%.lst: %.elf
+	$(OBJDUMP) -h -S $< > $@

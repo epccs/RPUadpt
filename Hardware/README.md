@@ -49,9 +49,9 @@ The serial port is a wired connection, it is immune to discovery or interference
 ![Status](./status_icon.png "RPUadpt Status")
 
 ```
-        ^6  Done: Design, Layout, BOM,
-            WIP: Review*,
-            Todo: Order Boards, Assembly, Testing, Evaluation.
+        ^6  Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
+            WIP: Evaluation.
+            Todo:  
             *during review the Design may change without changing the revision.
             add IOFF buffer between host (e.g. offboard FTDI Friend) and tranceiver like RPUpi has
             add IOFF buffer between optional host SPI and controler like RPUpi
@@ -62,13 +62,9 @@ The serial port is a wired connection, it is immune to discovery or interference
 
         ^5 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
            WIP: Evaluation.
-           location: 2017-3-19 addr '1', SWallEncl /w K3^1, RPUno^5, SLP003-12U. 
-
-        ^4 location: 2016-12-1 SWall Encl /w K3^0, RPUno^4, SLP003-12U. 
-                     2017-1-1 RPUno^4 had ADC7 parts changed to measre battery.
-                     2017-1-1 RPUno^4 had ADC6 hacked to measure raw PV.
-                     2017-1-5 This^4 had ICP1 hacked open.
-                     2017-3-19 scraped
+           location: 2017-3-19 addr '1', SWallEncl /w K3^2, RPUno^9, SLP003-12U.
+           location: 2018-6-19 addr '1', ShopLamp /w RPUlux^2
+           removed from tindie
 ```
 
 Debugging and fixing problems i.e. [Schooling](./Schooling/)
