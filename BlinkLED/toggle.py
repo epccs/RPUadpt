@@ -3,7 +3,7 @@
 
 # notes: https://pypi.org/project/smbus2/
 # https://github.com/quick2wire/quick2wire-python-api
-# py-xmbus is not active but has some forks https://github.com/pimoroni/py-smbus
+# py-smbus is not active but has some forks https://github.com/pimoroni/py-smbus
 
 import smbus
 
@@ -32,3 +32,4 @@ print(echo)
 # The SMBus read block is a second I2C transaction and has another receiving event followed by a transmit event.
 # My first attempt was data from the second transaction receiving event.
 # I have to keep the data sent in the first receive event to echo it back in the second transaction transmit event.
+# [0, 252]

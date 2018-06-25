@@ -47,6 +47,7 @@ void receive1_event(uint8_t* inBytes, int numBytes)
         i2c1Buffer[i] = inBytes[i];    
     }
     i2c1BufferLength = numBytes;
+    // skip commands without data and assume they are for read_i2c_block_data
     if (i2c1BufferLength > 1)
     {
         if ( (i2c1Buffer[0] == I2C_COMMAND_TO_TOGGLE_LED_BUILTIN_MODE) )
@@ -61,7 +62,7 @@ void receive1_event(uint8_t* inBytes, int numBytes)
 // Clock streatching should have been enabled befor this event was called
 void transmit1_event(void) 
 {
-    // SMBus seems to expect the old data from the last I2C packet so lets try that
+    // For SMBus echo the old data from the previous I2C receive event
     twi1_transmit(i2c1_oldBuffer, i2c1_oldBufferLength);
 }
 

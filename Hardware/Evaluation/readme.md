@@ -7,13 +7,54 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
-7. [^5 Remote Reset](#5-remote-reset)
-6. [^5 Bus Termination](#5-bus-termination)
-5. [^5 South Wall Enclosure](#5-south-wall-enclosure)
-4. [^3 Remote Bootload](#3-remote-bootload)
-3. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
-2. [^1 Mounts on Uno](#1-mounts-on-uno)
+1. [^6 I2C1 Checked With i2c-debug](#6-i2c1-checked-with-i2c-debug)
+1. [^5 Remote Reset](#5-remote-reset)
+1. [^5 Bus Termination](#5-bus-termination)
+1. [^5 South Wall Enclosure](#5-south-wall-enclosure)
+1. [^3 Remote Bootload](#3-remote-bootload)
+1. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
+1. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+
+## ^6 I2C1 Checked With i2c-debug
+
+[BlinkLED] allows the I2C1 port (e.g. the secnond I2C port on ATmega328pb) to interface with a host SBC.
+
+[BlinkLED]: https://github.com/epccs/RPUadpt/tree/master/BlinkLED
+
+The [i2c-debug] firmware can be used to test the I2C1 port, its address is at 0x2A. The Uno clone running [i2c-debug] has another I2C interface at 0x29. 
+
+[i2c-debug]: https://github.com/epccs/RPUno/tree/master/i2c-debug
+
+```
+picocom -b 38400 /dev/ttyUSB0
+...
+Terminal ready
+/0/iscan?
+{"scan":[{"addr":"0x29"},{"addr":"0x2A"}]}
+/0/iaddr 42
+{"address":"0x2A"}
+/0/ibuff 0,3
+{"txBuffer[2]":[{"data":"0x0"},{"data":"0x3"}]}
+/0/iwrite
+{"returnCode":"success"}
+```
+
+blinking has stopped
+
+```
+/0/ibuff 0
+{"txBuffer[2]":[{"data":"0x0"}]}
+/0/iread? 2
+{"rxBuffer":[{"data":"0x0"},{"data":"0xFC"}]}
+```
+
+blinking has resumed
+
+Note: I incuded the command byte befor reading the data because I think that is what SMBus does.
+
+![^6 I2C1_Checked_With_i2c-debug](./RPUadpt^6_with_fwBlinkLED_UnoClone_with_i2c-debug.jpg "^6 I2C1 Checked With i2c-debug")
 
 
 ## ^5 Remote Reset

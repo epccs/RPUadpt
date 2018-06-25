@@ -8,7 +8,7 @@ The [i2c-debug] firmware on an RPUno can be used to test the I2C host manager in
 
 [i2c-debug]: https://github.com/epccs/RPUno/tree/master/i2c-debug
 
-'''
+```
 picocom -b 38400 /dev/ttyUSB0
 ...
 Terminal ready
@@ -23,11 +23,10 @@ Terminal ready
 #blinking has stopped
 /0/ibuff 0
 {"txBuffer[2]":[{"data":"0x0"}]}
-# SMBus seems to include the command byte automaticly for the next transaction
 /0/iread? 2
 {"rxBuffer":[{"data":"0x0"},{"data":"0xFC"}]}
 #blinking has resumed
-'''
+```
 
 SMBus (???do not asume I have done this is right???): After write_i2c_block_data the 328pb holds the old data. When read_i2c_block_data occures it will put a I2C packet with the address followed by a request to read (which is the active transaction), at whcih point the slave returns the data for the previous write (e.g. the previous transaction). Now have a look at the Python program for a Raspery Pi.
 
