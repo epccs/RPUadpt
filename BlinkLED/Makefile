@@ -5,13 +5,15 @@
 TARGET = blinkLED
 LIBDIR = ../lib
 OBJECTS = main.o \
-	$(LIBDIR)/timers.o
+	$(LIBDIR)/timers.o \
+	$(LIBDIR)/twi1.o
 
 ## Chip and project-specific global definitions
 MCU   =  atmega328pb
 F_CPU = 12000000UL  
 BAUD  =  250000UL
-CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. 
+I2C1_ADDRESS = 0x2A
+CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD)  -DI2C1_ADDRESS=$(I2C1_ADDRESS) -I. 
 
 ## Cross-compilation
 CC = avr-gcc
