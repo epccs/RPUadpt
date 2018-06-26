@@ -7,6 +7,7 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
+1. [^6 I2C1 Checked With Raspberry Pi](#6-i2c1-checked-with-raspberry-pi)
 1. [^6 I2C1 Checked With i2c-debug](#6-i2c1-checked-with-i2c-debug)
 1. [^5 Remote Reset](#5-remote-reset)
 1. [^5 Bus Termination](#5-bus-termination)
@@ -15,6 +16,41 @@ This shows the setup and method used for evaluation of RPUadpt.
 1. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
 1. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+
+## ^6 I2C1 Checked With Raspberry Pi
+
+[Toggle] is a little Python program to run on a Raspberry Pi that has been setup as follows.
+
+[Toggle]: https://github.com/epccs/RPUadpt/blob/master/BlinkLED/toggle.py
+
+```
+sudo apt-get install i2c-tools python3-smbus
+sudo usermod -a -G i2c rsutherland
+# logout for the change to take
+i2cdetect 1
+WARNING! This program can confuse your I2C bus, cause data loss and worse!
+I will probe file /dev/i2c-1.
+I will probe address range 0x03-0x77.
+Continue? [Y/n] Y
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- -- 2a -- -- -- -- --
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --
+```
+
+The 328pb I2C1 port is connected to the Raspberry Pi, but the data echo I got back was [0, 0xFF].
+
+The bare metal should have returned [0, 0xFC] so what has gone wrong? Well, nothing. I sent the bare metal [0, 0x03] and the 328pb inverted the bits of the second byte for the echo that way I could see it had done something. The SMBus block read function is a second I2C transaction and it runs the twi received event a second time after the block write transaction (and before running the transmit event). Since I want to echo the data from the first transaction, I needed to preserve that old data from the first I2C transaction when (or before) the event for receiving the second transaction data occurs. Finally when the second transaction causes the transmit event I can pass the old data from the first receiving event.
+
+So to sum it up, there seem to be two receive events and one transmit event when the Raspberry Pi does a write_i2c_block and a read_i2c_block.
+
+![^6 I2C1_Checked_With_SMBus](./RPUadpt^6_with_fwBlinkLED_RaspberryPi_with_SMBus.jpg "^6 I2C1 Checked With SMBus")
 
 
 ## ^6 I2C1 Checked With i2c-debug
@@ -49,8 +85,6 @@ blinking has stopped
 /0/iread? 2
 {"rxBuffer":[{"data":"0x0"},{"data":"0xFC"}]}
 ```
-
-blinking has resumed
 
 Note: I incuded the command byte befor reading the data because I think that is what SMBus does.
 

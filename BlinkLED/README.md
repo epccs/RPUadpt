@@ -25,9 +25,8 @@ Terminal ready
 {"txBuffer[2]":[{"data":"0x0"}]}
 /0/iread? 2
 {"rxBuffer":[{"data":"0x0"},{"data":"0xFC"}]}
-#blinking has resumed
 ```
 
-SMBus (???do not asume I have done this is right???): After write_i2c_block_data the 328pb holds the old data. When read_i2c_block_data occures it will put a I2C packet with the address followed by a request to read (which is the active transaction), at whcih point the slave returns the data for the previous write (e.g. the previous transaction). Now have a look at the Python program for a Raspery Pi.
+SMBus (???do not asume I have done this is right???): After write_i2c_block_data the 328pb holds the old data. When read_i2c_block_data occures it will put a I2C packet with the address followed by a request to read (which is the active transaction), at whcih point the slave returns the data for the previous write (e.g. the previous transaction). Now have a look at the [Python program] for a Raspery Pi.
 
-[i2c-debug]:(https://github.com/epccs/RPUadpt/tree/master/BlinkLED/toggle.py)
+[Python program]: https://github.com/epccs/RPUadpt/tree/master/BlinkLED/toggle.py
