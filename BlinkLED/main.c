@@ -33,7 +33,7 @@ static unsigned long blink_started_at;
 #define I2C_COMMAND_TO_TOGGLE_LED_BUILTIN_MODE 0
 static uint8_t i2c_toggle;
 
-// called when I2C slave has received data
+// called when I2C1 slave has received data
 // Clock streatching should have been enabled befor this event was called
 void receive1_event(uint8_t* inBytes, int numBytes) 
 {
@@ -78,8 +78,8 @@ int main(void)
     initTimers(); //Timer0 Fast PWM mode, Timer1 & Timer2 Phase Correct PWM mode.
 
     twi1_setAddress(I2C1_ADDRESS);
-    twi1_attachSlaveTxEvent(transmit1_event); // called when I2C slave has been requested to send data
-    twi1_attachSlaveRxEvent(receive1_event); // called when I2C slave has received data
+    twi1_attachSlaveTxEvent(transmit1_event); // called when I2C1 slave has been requested to send data
+    twi1_attachSlaveRxEvent(receive1_event); // called when I2C1 slave has received data
     twi1_init(false); // do not use internal pull-up
     
     sei(); // Enable global interrupts to start TIMER0

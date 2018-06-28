@@ -11,12 +11,14 @@ This shield board plugs into a control board (e.g. [RPUno], [Irrigate7], or [Pun
 ## Inputs/Outputs/Functions
 
 ```
-        Full Duplex RS-422, multi-drop RX and TX lines
-        Half Duplex RS-485, multi-drop bus management line
-        The differential line is in Fail Safe state when UART is HIGH.
+        Full Duplex serial RX and TX lines
+        Half Duplex management line DTR
+        RX, TX, and management lines connect to RS-485 tranceivers
+        Differential pairs from transceivers allow multi-drop of the serial connections
+        The transceivers receiver has Fail Safe so all see 0V as a HIGH.
         Power is taken from +5V of the control board.
-        TWI0 (I2C) interface between control board and manager.
-        TWI1 (I2C) interface between host and manager.
+        TWI0 (I2C) interface between local programable unit and manager.
+        TWI1 (I2C) interface between local host and manager.
         IOFF buffers are used for UART and SPI host interface.
         IOFF allows the serial and control to remain functional when the host is powered down.
         UART and SPI interface buffers work with host voltage 5V to 1.8V.
@@ -26,14 +28,14 @@ This shield board plugs into a control board (e.g. [RPUno], [Irrigate7], or [Pun
 
 ```
         Daisy chain serial from multiple control boards to a host.
-        Allow a point to point mode for bootloading firmware.
-        Allow SPI from a local host to interface with control board.
-        Allow local control board to use an SPI based MicroSD card breakout.
+        Use a point to point mode to bootload firmware to an addressed target.
+        Use SPI to transfer data from a local host master to local programable unit slave.
+        Or use the SPI local programable unit as master to operate a MicroSD card as slave.
 ```
 
 ## Notice
 
-The serial port is a wired connection, it is immune to discovery or interference by radio. The hardware is raw and lacks training wheels (i.e. it is not a polished product).
+The serial port is a wired connection. The hardware is raw and lacks training wheels (i.e. it is not a polished product). The ATmega328pb toolchain is not widely available (e.g. {Debain: {stretch:no, buster:yes, sid:yes}} )
 
 
 # Table Of Contents

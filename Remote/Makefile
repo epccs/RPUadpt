@@ -7,17 +7,19 @@ LIBDIR = ../lib
 OBJECTS = main.o \
 	$(LIBDIR)/uart.o \
 	$(LIBDIR)/timers.o \
-	$(LIBDIR)/twi0.o
+	$(LIBDIR)/twi0.o \
+	$(LIBDIR)/twi1.o
 
 ## Chip and project-specific global definitions
 MCU   =  atmega328pb
 F_CPU = 12000000UL  
 BAUD  =  250000UL
-I2C_ADDRESS = 0x29
+I2C0_ADDRESS = 0x29
+I2C1_ADDRESS = 0x2A
 RPU_ADDRESS = 0x31
 # '0' or ascii 0x30 is default address sent on DTR pair when host connects,  e.g. pulls nDTR or nRTS active
 RPU_HOST_CONNECT = 0x30
-CPPFLAGS = -DRPU_HOST_CONNECT=$(RPU_HOST_CONNECT) -DI2C_ADDRESS=$(I2C_ADDRESS) -DRPU_ADDRESS=$(RPU_ADDRESS) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. 
+CPPFLAGS = -DRPU_HOST_CONNECT=$(RPU_HOST_CONNECT) -DI2C0_ADDRESS=$(I2C0_ADDRESS) -DI2C1_ADDRESS=$(I2C1_ADDRESS) -DRPU_ADDRESS=$(RPU_ADDRESS) -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. 
 
 # at power up send a byte on the DTR pair to unlock the bus
 # CPPFLAGS += -DDISCONNECT_AT_PWRUP=1

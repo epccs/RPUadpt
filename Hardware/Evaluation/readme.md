@@ -7,8 +7,11 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
+1. [^6 SPI Checked With Raspberry Pi](#6-spi-checked-with-raspberry-pi)
+1. [^6 Serial Checked With Raspberry Pi](#6-serial-checked-with-raspberry-pi)
 1. [^6 I2C1 Checked With Raspberry Pi](#6-i2c1-checked-with-raspberry-pi)
 1. [^6 I2C1 Checked With i2c-debug](#6-i2c1-checked-with-i2c-debug)
+1. [^6 ISCP ATmega328pb](#6-iscp-atmega329pb)
 1. [^5 Remote Reset](#5-remote-reset)
 1. [^5 Bus Termination](#5-bus-termination)
 1. [^5 South Wall Enclosure](#5-south-wall-enclosure)
@@ -16,6 +19,41 @@ This shows the setup and method used for evaluation of RPUadpt.
 1. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
 1. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+## ^6 SPI Checked With Raspberry Pi
+
+To Do.
+
+
+## ^6 Serial Checked With Raspberry Pi
+
+The [Remote] firmware has the Raspberry Pi locked out from using the serial connection, but with I2C1 it can be enabled. One of the status bits is for host lockout. I2C command 7 is used to set that status bit.
+
+[Remote]: https://github.com/epccs/RPUadpt/tree/master/Remote
+
+``` 
+python3
+import smbus
+bus = smbus.SMBus(1)
+#write_i2c_block_data(I2C_ADDR, I2C_COMMAND, DATA)
+bus.write_i2c_block_data(42, 7, [0])
+#read_i2c_block_data(I2C_ADDR, OFFSET, NUM_OF_BYTES)
+#OFFSET is not implemented
+print(bus.read_i2c_block_data(42,0, 2))
+[7, 0]
+exit()
+picocom -b 38400 /dev/ttyAMA0
+...
+Terminal ready
+/1/id?
+# C-a, C-x.
+``` 
+
+Once the host lockout is clear the Raspberry Pi can bootload the address set with command 3 (see [Remote]). The Raspberry Pi will need to use its [RTS] handshack lines for avrdude to work.
+
+[RTS]: https://github.com/epccs/RPUpi/tree/master/RPiRtsCts
+
+![^6 fwRemote_and_Rpi](./RPUadpt^6_with_fwRemote_RaspberryPi.jpg "^6 fw Remote and Rpi")
 
 
 ## ^6 I2C1 Checked With Raspberry Pi
@@ -89,6 +127,21 @@ blinking has stopped
 Note: I incuded the command byte befor reading the data because I think that is what SMBus does.
 
 ![^6 I2C1_Checked_With_i2c-debug](./RPUadpt^6_with_fwBlinkLED_UnoClone_with_i2c-debug.jpg "^6 I2C1 Checked With i2c-debug")
+
+
+## ^6 ISCP ATmega328pb
+
+Yes it works, but... 
+
+There is a but. 
+
+The Debain mainline starting at buster allows using the Atmel support packages, so that is what I am doing, check a Makefile to see how it is used. Also avr-libc assumes one TWI port. TWSR is not defined, but we have TWSR0 and TWSR1. 
+
+```
+#define TW_STATUS   (TWSR & TW_STATUS_MASK)
+```
+
+I am not using SPI or the other serial port from the manager on this board so those are not going to be looked at.
 
 
 ## ^5 Remote Reset

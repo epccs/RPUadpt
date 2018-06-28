@@ -19,6 +19,7 @@ http://www.gnu.org/licenses/gpl-2.0.html
 #include <avr/pgmspace.h>
 #include "../lib/timers.h"
 #include "../lib/twi0.h"
+#include "../lib/twi1.h"
 #include "../lib/uart.h"
 #include "../lib/pin_num.h"
 #include "../lib/pins_board.h"
@@ -49,8 +50,12 @@ const uint8_t EE_IdTable[] PROGMEM =
 #define EE_RPU_ID 40
 #define EE_RPU_ADDRESS 50
 
-static uint8_t i2cBuffer[TWI0_BUFFER_LENGTH];
-static uint8_t i2cBufferLength = 0;
+static uint8_t i2c0Buffer[TWI0_BUFFER_LENGTH];
+static uint8_t i2c0BufferLength = 0;
+static uint8_t i2c1Buffer[TWI1_BUFFER_LENGTH];
+static uint8_t i2c1BufferLength = 0;
+static uint8_t i2c1_oldBuffer[TWI1_BUFFER_LENGTH]; //i2c1_old is for SMBus
+static uint8_t i2c1_oldBufferLength = 0;
 
 #define BOOTLOADER_ACTIVE 115000
 #define BLINK_BOOTLD_DELAY 75
@@ -101,20 +106,21 @@ volatile uint8_t uart_output;
 
 
 // called when I2C data is received. 
+// RPU Commands on I2C0 does 0..7
 void receive0_event(uint8_t* inBytes, int numBytes) 
 {
    
     // This buffer will echo's back with transmit0_event()
     for(uint8_t i = 0; i < numBytes; ++i)
     {
-        i2cBuffer[i] = inBytes[i];    
+        i2c0Buffer[i] = inBytes[i];    
     }
-    i2cBufferLength = numBytes;
-    if (i2cBufferLength > 1)
+    i2c0BufferLength = numBytes;
+    if (i2c0BufferLength > 1)
     {
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_RPU_ADDRESS) )
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_READ_RPU_ADDRESS) )
         {
-            i2cBuffer[1] = rpu_address; // '1' is 0x31
+            i2c0Buffer[1] = rpu_address; // '1' is 0x31
             local_mcu_is_rpu_aware =1;
             
             // end the local mcu lockout. 
@@ -141,28 +147,28 @@ void receive0_event(uint8_t* inBytes, int numBytes)
                     bootloader_started_at = millis() - BOOTLOADER_ACTIVE;
                 }
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_RPU_ADDRESS) )
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_SET_RPU_ADDRESS) )
         {
-            rpu_address = i2cBuffer[1];
+            rpu_address = i2c0Buffer[1];
             write_rpu_address_to_eeprom = 1;
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR) )
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR) )
         {  // read byte sent when HOST_nDTR toggles
-            i2cBuffer[1] = bootloader_address;
+            i2c0Buffer[1] = bootloader_address;
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR) ) 
-        { // buffer the byte that is sent when HOST_nDTR toggles
-            bootloader_address = i2cBuffer[1];
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR) ) 
+        { // set the byte that is sent when HOST_nDTR toggles
+            bootloader_address = i2c0Buffer[1];
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_SW_SHUTDOWN_DETECTED) ) 
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_READ_SW_SHUTDOWN_DETECTED) ) 
         { // when ICP1 pin is pulled  down the host (e.g. Pi Zero on RPUpi) should hault
-            i2cBuffer[1] = shutdown_detected;
+            i2c0Buffer[1] = shutdown_detected;
              // reading clears this flag that was set in check_shutdown() but it is up to the I2C master to do somthing about it.
             shutdown_detected = 0;
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_SW_FOR_SHUTDOWN) ) 
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_SET_SW_FOR_SHUTDOWN) ) 
         { // pull ICP1 pin low to hault the host (e.g. Pi Zero on RPUpi)
-            if (i2cBuffer[1] == 1)
+            if (i2c0Buffer[1] == 1)
             {
                 pinMode(SHUTDOWN, OUTPUT);
                 digitalWrite(SHUTDOWN, LOW);
@@ -174,24 +180,74 @@ void receive0_event(uint8_t* inBytes, int numBytes)
             }
             // else ignore
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_READ_STATUS) )
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_READ_STATUS) )
         {
-            i2cBuffer[1] = status_byt;
+            i2c0Buffer[1] = status_byt;
         }
-        if ( (i2cBuffer[0] == I2C_COMMAND_TO_SET_STATUS) )
+        if ( (i2c0Buffer[0] == I2C_COMMAND_TO_SET_STATUS) )
         {
-            status_byt = i2cBuffer[1];
+            status_byt = i2c0Buffer[1];
         }
     }
 }
 
-// called when I2C data is requested.
+// called when I2C0 data is requested.
 void transmit0_event(void) 
 {
     // respond with an echo of the last message sent
-    uint8_t return_code = twi0_transmit(i2cBuffer, i2cBufferLength);
+    uint8_t return_code = twi0_transmit(i2c0Buffer, i2c0BufferLength);
     if (return_code != 0)
         status_byt &= (1<<DTR_I2C_TRANSMIT_FAIL);
+}
+
+// called when I2C1 slave has received data
+// Host Commands on I2C1 does 0, 2, 3, 6, 7
+void receive1_event(uint8_t* inBytes, int numBytes) 
+{
+    for(uint8_t i = 0; i < i2c1BufferLength; ++i)
+    {
+        i2c1_oldBuffer[i] = i2c1Buffer[i];    
+    }
+    i2c1_oldBufferLength = i2c1BufferLength;
+    for(uint8_t i = 0; i < numBytes; ++i)
+    {
+        i2c1Buffer[i] = inBytes[i];    
+    }
+    i2c1BufferLength = numBytes;
+    // skip commands without data and assume they are for read_i2c_block_data
+    if (i2c1BufferLength > 1)
+    {
+        if ( (i2c1Buffer[0] == I2C_COMMAND_TO_READ_RPU_ADDRESS) ) // 0
+        {
+            i2c1Buffer[1] = rpu_address; // '1' is 0x31
+            // host reading does not mean the local_mcu_is_rpu_aware
+            // also do not change the bus state
+            // just tell the host what the local RPU address is
+        }
+        if ( (i2c1Buffer[0] == I2C_COMMAND_TO_READ_ADDRESS_SENT_ON_ACTIVE_DTR) ) // 2
+        {  // read byte sent when HOST_nDTR toggles
+            i2c1Buffer[1] = bootloader_address;
+        }
+        if ( (i2c1Buffer[0] == I2C_COMMAND_TO_SET_ADDRESS_SENT_ON_ACTIVE_DTR) )  // 3
+        { // set the byte that is sent when HOST_nDTR toggles
+            bootloader_address = i2c1Buffer[1];
+        }
+        if ( (i2c1Buffer[0] == I2C_COMMAND_TO_READ_STATUS) ) // 6
+        {
+            i2c1Buffer[1] = status_byt;
+        }
+        if ( (i2c1Buffer[0] == I2C_COMMAND_TO_SET_STATUS) ) // 7
+        {
+            status_byt = i2c1Buffer[1];
+        }
+    }
+}
+
+// called when I2C1 slave has been requested to send data
+void transmit1_event(void) 
+{
+    // For SMBus echo the old data from the previous I2C receive event
+    twi1_transmit(i2c1_oldBuffer, i2c1_oldBufferLength);
 }
 
 void connect_normal_mode(void)
@@ -312,10 +368,15 @@ void setup(void)
     /* Initialize UART, it returns a pointer to FILE so redirect of stdin and stdout works*/
     stdout = stdin = uartstream0_init(BAUD);
 
-    twi0_setAddress(I2C_ADDRESS);
-    twi0_attachSlaveTxEvent(transmit0_event); // called when I2C data is requested 
-    twi0_attachSlaveRxEvent(receive0_event); // slave receive
+    twi0_setAddress(I2C0_ADDRESS);
+    twi0_attachSlaveTxEvent(transmit0_event); // called when I2C0 slave has been requested to send data
+    twi0_attachSlaveRxEvent(receive0_event); // called when I2C0 slave has received data
     twi0_init(false); // do not use internal pull-up
+
+    twi1_setAddress(I2C1_ADDRESS);
+    twi1_attachSlaveTxEvent(transmit1_event); // called when I2C1 slave has been requested to send data
+    twi1_attachSlaveRxEvent(receive1_event); // called when I2C1 slave has received data
+    twi1_init(false); // do not use internal pull-up a Raspberry Pi has them on board
 
     sei(); // Enable global interrupts to start TIMER0 and UART
     
@@ -355,13 +416,15 @@ void setup(void)
     uart_has_TTL = 0;
     
 #if defined(DISCONNECT_AT_PWRUP)
-    // at power up send a byte on the DTR pair to unlock the bus (this is a problem if foreign host is in control)
+    // at power up send a byte on the DTR pair to unlock the bus 
+    // problem is if a foreign host has the bus this would be bad
     uart_started_at = millis();
     uart_output= RPU_HOST_DISCONNECT;
     printf("%c", uart_output); 
 #endif
 #if defined(HOST_LOCKOUT)
-//  status_byt is zero at this point, but this shows how to set the bit without changing other bits
+// this will keep the host off the bus until the HOST_LOCKOUT_STATUS bit in status_byt is clear 
+// status_byt is zero at this point, but this shows how to set the bit without changing other bits
     status_byt |= (1<<HOST_LOCKOUT_STATUS);
 #endif
 }
