@@ -22,7 +22,88 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 ## ^6 SPI Checked With Raspberry Pi
 
-To Do.
+The unit under test is at address '1'. So first I need to bootload its local RPU (a junk RPUno^8) with [SpiSlv].
+
+[SpiSlv]:https://github.com/epccs/RPUno/tree/master/SpiSlv
+
+Set the booload address on what ever shield is connected to the host that will build [SpiSlv] and upload it. Guess I will just use the new I2C1 interface to do this.
+
+``` 
+# first set user premision to use the SPI port
+sudo usermod -a -G spi rsutherland
+python3
+import smbus
+bus = smbus.SMBus(1)
+bus.write_i2c_block_data(42, 0, [0])
+chr(bus.read_i2c_block_data(42,0, 2)[1])
+'1'
+# with command 0 on I2C1 the local address is was seen as ascii '1' or 49
+bus.write_i2c_block_data(42, 2, [0])
+chr(bus.read_i2c_block_data(42,0, 2)[1])
+'0'
+# command 2 showed the bootload address which was '0'
+# which will be canged to '1' with command 3
+bus.write_i2c_block_data(42, 3, [49])
+chr(bus.read_i2c_block_data(42,0, 2)[1])
+'1'
+bus.write_i2c_block_data(42, 7, [0])
+print(bus.read_i2c_block_data(42,0, 2))
+[7, 0]
+# command 7 was used to clear the local status bits, the host lockout bit was set at power up.
+exit()
+# next check that RPU '1' is blinking fast
+picocom -b 38400 /dev/ttyAMA0
+...
+Terminal ready
+# C-a, C-x.
+# now change the working directory to where SpiSlv is and then build and upload
+cd ~/wher_you_told_git_to_clone/RPUno/SpiSlv
+make bootload
+...
+avrdude done.  Thank you.
+gcc -o spidev_test spidev_test.c
+chmod ugo+x ./spidev_test
+# logout for the change to take
+# trun on the RPU SPI port
+picocom -b 38400 /dev/ttyAMA0
+...
+Terminal ready
+/1/id?
+{"id":{"name":"SpiSlv","desc":"RPUno (14140^9) Board /w atmega328p","avr-gcc":"4.9.2"}}
+/1/spi UP
+{"SPI":"UP"}
+# C-a, C-x.
+# test with
+./spidev_test -s 1000 -D /dev/spidev0.0
+./spidev_test -s 10000 -D /dev/spidev0.0
+./spidev_test -s 100000 -D /dev/spidev0.0
+./spidev_test -s 250000 -D /dev/spidev0.0
+./spidev_test -s 500000 -D /dev/spidev0.0
+# next test fail on my setup which is using a weak pullup 
+# for SCK, nSS, and MOSI that input into a ATmega328p
+./spidev_test -s 1000000 -D /dev/spidev0.0
+./spidev_test -s 2000000 -D /dev/spidev0.0
+```
+
+The test output should look like this
+
+```
+spi mode: 0
+bits per word: 8
+max speed: 500000 Hz (500 KHz)
+
+0D FF FF FF FF FF
+FF 40 00 00 00 00
+95 FF FF FF FF FF
+FF FF FF FF FF FF
+FF FF FF FF FF FF
+FF DE AD BE EF BA
+AD F0
+``` 
+
+The maximum speed seen is 500kHz. Adding 3k Ohm pullup on R32, R34, and R37 should allow higher speed.
+
+![^6_fwRemote_RPU_fwSpiSlv_Rpi](./RPUadpt^6_fwRemote_RPUno^8_fwSpiSlv_RaspberryPi.jpg "^6 fwRemote RPU fwSpiSlv and Rpi")
 
 
 ## ^6 Serial Checked With Raspberry Pi
@@ -142,6 +223,8 @@ The Debain mainline starting at buster allows using the Atmel support packages, 
 ```
 
 I am not using SPI or the other serial port from the manager on this board so those are not going to be looked at.
+
+When ISCP is used the managers control of the shutdown pin will end and it will float. The Raspberry Pi should then halt. Nothing bad should happen, but it meas the Raspberry Pi can not be the ICSP tool. 
 
 
 ## ^5 Remote Reset
