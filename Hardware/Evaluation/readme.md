@@ -31,6 +31,7 @@ Set the booload address on what ever shield is connected to the host that will b
 ``` 
 # first set user premision to use the SPI port
 sudo usermod -a -G spi rsutherland
+# logout for the change to take
 python3
 import smbus
 bus = smbus.SMBus(1)
@@ -63,7 +64,6 @@ make bootload
 avrdude done.  Thank you.
 gcc -o spidev_test spidev_test.c
 chmod ugo+x ./spidev_test
-# logout for the change to take
 # trun on the RPU SPI port
 picocom -b 38400 /dev/ttyAMA0
 ...
@@ -224,7 +224,7 @@ The Debain mainline starting at buster allows using the Atmel support packages, 
 
 I am not using SPI or the other serial port from the manager on this board so those are not going to be looked at.
 
-When ISCP is used the managers control of the shutdown pin will end and it will float. The Raspberry Pi should then halt. Nothing bad should happen, but it meas the Raspberry Pi can not be the ICSP tool. 
+When ISCP is used the managers control of the shutdown pin will end and it will float. The Raspberry Pi should then halt. Nothing bad should happen, but it means the Raspberry Pi can not be the ICSP tool. 
 
 
 ## ^5 Remote Reset

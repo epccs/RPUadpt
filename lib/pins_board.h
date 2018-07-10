@@ -18,12 +18,6 @@
 #ifndef Pins_Board_h
 #define Pins_Board_h
 
-#define NUM_DIGITAL_PINS            20
-#define NUM_ANALOG_INPUTS        8
-// analogInputToDigitalPin() takes an AVR analog channel number and returns the digital pin number otherwise -1.
-//#define analogInputToDigitalPin(p)  ((p < 8) ? (p) + 14 : -1)
-#define digitalPinHasPWM(p)         ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11)
-
 #define DTR_RXD 0
 #define DTR_TXD 1
 #define HOST_nDTR 2

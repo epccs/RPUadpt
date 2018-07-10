@@ -1,4 +1,4 @@
-/* RPUadpt DigitalIO Library
+/* DigitalIO Library
  * Copyright (C) 2016 Ronald Sutherland
  *
  * This Library is free software: you can redistribute it and/or modify
@@ -42,9 +42,9 @@ typedef struct {
 } Pin_Map;
 
 // the device-specs provide the define, so use "avr-gcc -B" to provide one for the 328pb if it is not in mainline
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega328PB__)
+#if defined(__AVR_ATmega328PB__)
 
-#define NUM_DIGITAL_PINS 20
+#define NUM_DIGITAL_PINS 24
 
 /* Each of the AVR Digital I/O ports is associated with three I/O registers. 
 8 bit Data Direction Register (DDRx) each bit sets a pin as input (=0) or output (=1).
@@ -52,30 +52,34 @@ typedef struct {
 8 bit Port Data Register (PORTx) each bit drives a pin if set as output (or sets pullup if input)
 Where x is the port A, B, C, etc.
 
-Wiring uses pin numbers to control their functions.  {PCINT} function #notes [RPUadpt] */
+Wiring uses pin numbers to control their functions. */
 static const Pin_Map pinMap[NUM_DIGITAL_PINS] = {
-    [0] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD0 }, // {16} RXD [DTR_RXD]
-    [1] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD1 }, // {17} TXD [DTR_TXD]
-    [2] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD2 }, // {18} INT0 [HOST_nDTR]
-    [3] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD3 }, // {19} INT1 OC2B [HOST_nRTS]
-    [4] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD4 }, // {20} T0 [RX_nRE]
-    [5] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD5 }, // {21} T1 OC0B [TX_DE]
-    [6] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD6 }, // {22} OC0A [DTR_nRE]
-    [7] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD7 }, // {23} [DTR_DE]
-    [8] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB0 }, // {0} ICP1 [SHUTDWN]
-    [9] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB1 }, // {1} OC1A [LED_BUILTIN]
-    [10] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB2 }, // {2} nSS OC1B [nSS]
-    [11] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB3 }, // {3} MOSI OC2A [MOSI]
-    [12] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB4 }, // {4} MISO [MISO]
-    [13] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB5 }, // {5} SCK [SCK]
-    [14] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC0 }, // {8} ADC0 [HOST_nCTS]
-    [15] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC1 }, // {9} ADC1 [HOST_nDSR]
-    [16] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC2 }, // {10} ADC2 [TX_nRE]
-    [17] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC3 }, // {11} ADC3 [RX_DE]
-    [18] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC4 }, // {12} ADC4 SDA [SDA0]
-    [19] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC5 } // {13} ADC5 SCL [SCL0]
+    [0] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD0 }, // DTR_RXD
+    [1] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD1 }, // DTR_TXD
+    [2] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD2 }, // HOST_nDTR
+    [3] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD3 }, // HOST_nRTS
+    [4] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD4 }, // RX_nRE
+    [5] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD5 }, // TX_DE
+    [6] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD6 }, // DTR_nRE
+    [7] = { .ddr=&DDRD, .pin=&PIND, .port=&PORTD, .bit= PD7 }, // DTR_DE
+    [8] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB0 }, // SHUTDWN 
+    [9] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB1 }, // LED_BUILTIN
+    [10] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB2 }, // nSS
+    [11] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB3 }, // MOSI
+    [12] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB4 }, // MISO
+    [13] = { .ddr=&DDRB, .pin=&PINB, .port=&PORTB, .bit= PB5 }, // SCK
+    [14] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC0 }, // HOST_nCTS
+    [15] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC1 }, // HOST_nDSR
+    [16] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC2 }, // TX_nRE
+    [17] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC3 }, //  RX_DE
+    [18] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC4 }, // SDA0
+    [19] = { .ddr=&DDRC, .pin=&PINC, .port=&PORTC, .bit= PC5 }, //  SCL0
+    [20] = { .ddr=&DDRE, .pin=&PINE, .port=&PORTE, .bit= PE2 }, // 
+    [21] = { .ddr=&DDRE, .pin=&PINE, .port=&PORTE, .bit= PE3 }, // 
+    [22] = { .ddr=&DDRE, .pin=&PINE, .port=&PORTE, .bit= PE0 }, // SDA1
+    [23] = { .ddr=&DDRE, .pin=&PINE, .port=&PORTE, .bit= PE1 } // SCL1
 };
-#endif  // defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__)  || defined(__AVR_ATmega328P__)
+#endif  // defined(__AVR_ATmega328PB__)
 
 void badPinNumber(void) __attribute__((error("Pin number is too large or not a constant")));
 
