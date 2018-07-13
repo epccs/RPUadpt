@@ -6,7 +6,7 @@ From <https://github.com/epccs/RPUadpt/>
 
 Shield used to connect a controller board to a multi-drop serial bus (e.g. [RPUbus]). Modular 8P8C connectors allow RJ-45 connectors and CAT5 to run the differential pairs between locations. The robust noise immunity of the differential pairs allows a host computer (e.g. Pi Zero with [RPUpi], or desktop with [USBuart]) to interface with and bootload the controller board(s) in noisy environments over serial hardware that can be physically secured.
 
-[RPUbus]: http://rpubus.org/
+[RPUbus]: https://rpubus.org/
 [USBuart]: https://github.com/epccs/Driver/tree/master/USBuart
 [RPUpi]: https://github.com/epccs/RPUpi
 
@@ -20,7 +20,7 @@ I2C between the manager and the controller allows its program to read an address
 [Irrigate7]: https://github.com/epccs/Irrigate7
 [Punica]: https://github.com/epccs/Punica
 
-[Forum](http://rpubus.org/bb/viewforum.php?f=7)
+[Forum](https://rpubus.org/bb/viewforum.php?f=7)
 
 [HackADay](https://hackaday.io/project/17719-rpuadpt)
 
@@ -78,11 +78,11 @@ sudo apt-get install git gcc-avr binutils-avr gdb-avr avr-libc avrdude
 git clone https://github.com/epccs/RPUadpt
 ```
 
-* [gcc-avr](http://packages.ubuntu.com/search?keywords=gcc-avr)
-* [binutils-avr](http://packages.ubuntu.com/search?keywords=binutils-avr)
-* [gdb-avr](http://packages.ubuntu.com/search?keywords=gdb-avr)
-* [avr-libc](http://packages.ubuntu.com/search?keywords=avr-libc)
-* [avrdude](http://packages.ubuntu.com/search?keywords=avrdude)
+* [gcc-avr](https://packages.ubuntu.com/search?keywords=gcc-avr)
+* [binutils-avr](https://packages.ubuntu.com/search?keywords=binutils-avr)
+* [gdb-avr](https://packages.ubuntu.com/search?keywords=gdb-avr)
+* [avr-libc](https://packages.ubuntu.com/search?keywords=avr-libc)
+* [avrdude](https://packages.ubuntu.com/search?keywords=avrdude)
 
 The ATmega328pb is not in mainline, so the files from Atmel [atpack] (DFP.1.2.209.atpack) are included in this repo for use with avr-gcc (GCC) 5.4.0. At the time of this writing Raspbian has avr-gcc (GCC) 4.9.2 which does not support atpack files.
 

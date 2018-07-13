@@ -130,7 +130,9 @@ Y. | [BRD] [SMD] [HDR] [CAT5]
 
 __WARNING: The shield will be damaged if removed from a powered MCU board. Before separating the shield from the MCU board it is very important to check that all power sources are disconnected.__
 
-The CAT5 needs wired just like an Ethernet cable following T568A (or T568B) method. http://en.wikipedia.org/wiki/Category_5_cable
+The CAT5 needs wired just like an Ethernet cable following [T568A] (or T568B) method. 
+
+[T568A]: https://en.wikipedia.org/wiki/Category_5_cable
 
 Grounding should occur at one location only. If a RPUftdi is used then the host frame will be connected to the local earth grounding system through USB. Unfortunately, the ground wires within CAT5 will not survive a lightning strike and will bring it to the host. To reduce the risk run a #14 AWG ground wire between the remote device and the ground system connected to the host chassis. Also, the host chassis needs a good (#14 AWG or larger) wire to the same ground system (see NEC sec 250). 
 
