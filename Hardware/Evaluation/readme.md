@@ -11,7 +11,7 @@ This shows the setup and method used for evaluation of RPUadpt.
 1. [^6 Serial Checked With Raspberry Pi](#6-serial-checked-with-raspberry-pi)
 1. [^6 I2C1 Checked With Raspberry Pi](#6-i2c1-checked-with-raspberry-pi)
 1. [^6 I2C1 Checked With i2c-debug](#6-i2c1-checked-with-i2c-debug)
-1. [^6 ISCP ATmega328pb](#6-iscp-atmega329pb)
+1. [^6 ISCP ATmega328pb](#6-iscp-atmega328pb)
 1. [^5 Remote Reset](#5-remote-reset)
 1. [^5 Bus Termination](#5-bus-termination)
 1. [^5 South Wall Enclosure](#5-south-wall-enclosure)
@@ -222,9 +222,34 @@ The Debain mainline starting at buster allows using the Atmel support packages, 
 #define TW_STATUS   (TWSR & TW_STATUS_MASK)
 ```
 
-I am not using SPI or the other serial port from the manager on this board so those are not going to be looked at.
+It has a new signature and fuse at efuse bit 3 for clock failure detection, so the avrdude config needs
 
-When ISCP is used the managers control of the shutdown pin will end and it will float. The Raspberry Pi should then halt. Nothing bad should happen, but it means the Raspberry Pi can not be the ICSP tool. 
+```
+part parent "m328"
+    id			= "m328pb";
+    desc		= "ATmega328PB";
+    signature		= 0x1e 0x95 0x16;
+
+    ocdrev              = 1;
+    
+    memory "efuse"
+        size = 1;
+        min_write_delay = 4500;
+        max_write_delay = 4500;
+        read = "0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0",
+               "x x x x x x x x o o o o o o o o";
+
+        write = "1 0 1 0 1 1 0 0 1 0 1 0 0 1 0 0",
+                "x x x x x x x x x x x x i i i i";
+    ;
+;
+```
+
+I am not using SPI or the other serial port from the manager on this board so best look at [MiniCore] for info on those.
+
+[MiniCore]: https://github.com/MCUdude/MiniCore
+
+When ISCP is used to program the manager its control of the shutdown pin will stop and the pin will float. The Raspberry Pi should then halt, and nothing bad should happen, but it means the Raspberry Pi can not be the ICSP tool. 
 
 
 ## ^5 Remote Reset
