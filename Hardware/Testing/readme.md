@@ -49,11 +49,11 @@ Apply a 5V source set with a 30mA current limit to the +5V header pin. Check tha
 
 ```
 /^6/328pb
-{   "I_IN_BLANKMCU_mA":[2.0,],
-    "LDO_V":[3.299,] }
+{   "I_IN_BLANKMCU_mA":[2.0,2.5,2.5,],
+    "LDO_V":[3.299,3.307,3.284,] }
 /^5/328p
 {   "I_IN_BLANKMCU_mA":[2.1,2.2,2.6,2.3,2.6,],
-    "LDO_V":[3.285,3.299,3.303,3.275,3.276] }
+    "LDO_V":[3.285,3.299,3.303,3.275,3.276,] }
 ```
 
 ## Set MCU Fuse
@@ -68,7 +68,7 @@ Clone the RPUadpt repository where you want.
 
 ```
 git clone https://github.com/epccs/RPUadpt
-cd Bootload
+cd RPUadpt/Bootload
 ```
 
 Connect a 5V supply with CC mode set at 30mA to the +5V (J7 pin 4) and  0V (J7 pin 2). Connect the ICSP tool (J9). The MCU needs its fuses set, so run the Makefile rule to do that. 
@@ -83,7 +83,7 @@ Disconnect the ICSP tool and measure the input current for 12Mhz crystal at 3.3V
 
 ```
 /^6/328pb
-{   "I_IN_MCU_12MHZ_LP-CRYSTAL_mA":[8.4,]}
+{   "I_IN_MCU_12MHZ_LP-CRYSTAL_mA":[8.4,8.1,8.3,]}
 /^5/328p
 {   "I_IN_MCU_12MHZ_LP-CRYSTAL_mA":[5.1,5.2,5.0,5.5,5.3,5.1,5.1,]}
 # old values for referance
@@ -108,8 +108,8 @@ As the firmware loops the input current can be measured, it should have two dist
 
 ```
 /^6/328pb
-{   "DTR_HLF_LD_mA":[36.8,],
-    "DTR_NO_LD_mA":[13.7,] }
+{   "DTR_HLF_LD_mA":[36.8,37.1,36.6,],
+    "DTR_NO_LD_mA":[13.7,13.6,13.5,] }
 /^5/328p
 {   "DTR_HLF_LD_mA":[33.0,33.1,33.3,32.7,33.0,],
     "DTR_NO_LD_mA":[10.0,10.0,10.1,10.0,10.0,] }
@@ -126,8 +126,8 @@ Check  that the input current is cycling between 56mA and 33mA. At 59mA the TX d
 
 ```
 /^6/328pb
-{   "DTR_TX_HLF_LD_mA":[59.3,],
-    "TX_HLF_LD_mA":[36.4,] }
+{   "DTR_TX_HLF_LD_mA":[59.3,59.6,59.0,],
+    "TX_HLF_LD_mA":[36.4,36.2,36.0,] }
 /^5/328p
 {   "DTR_TX_HLF_LD_mA":[55.0,55.2,54.9,55.5,],
     "TX_HLF_LD_mA":[32.3,32.2,32.0,32.4,] }
@@ -140,8 +140,8 @@ Same as Differential Bias test with a plug in a RJ45 loopback connector to conne
 
 ```
 /^6/328pb
-{   "DTR_HLF_LD_TX_FL_LD_mA":[77.0,],
-    "TX_FL_LD_mA":[53.6,] }
+{   "DTR_HLF_LD_TX_FL_LD_mA":[77.0,77.0,76.7,],
+    "TX_FL_LD_mA":[53.6,54.0,53.4,] }
 /^5/328p
 {   "DTR_HLF_LD_TX_FL_LD_mA":[72.3,72.3,72.1,72.4,],
     "TX_FL_LD_mA":[49.0,49.4,49.2,49.8,] }
@@ -156,8 +156,8 @@ Disconnect TX from ground and Connect it to IOREF, which will disable the TX tra
 
 ```
 /^6/328pb
-{   "DTR_HLF_LD_RX_FL_LD_mA":[82.1,],
-    "RX_FL_LD_mA":[59.3,] }
+{   "DTR_HLF_LD_RX_FL_LD_mA":[82.1,82.8,81.7,],
+    "RX_FL_LD_mA":[59.3,59.3,58.9,] }
 /^5/328p
 {   "DTR_HLF_LD_RX_FL_LD_mA":[73.0,72.7,73.0,72.5,],
     "RX_FL_LD_mA":[50.5,49.9,49.9,49.6,] }
@@ -241,9 +241,7 @@ make bootload
 
 ## I2C Slave test
 
-With i2c-debug loaded in the DUT's MCU board power cycle the DUT board (e.g. disconnect PV and battery from its RPUno). If BUILTIN_LED is connected it will blink at 0.5Hz (1 sec on, and 1 sec off) when I2C reads correctly.
-
-Note: hotplugging can damage the PV.
+With i2c-debug loaded in the DUT's MCU board power cycle the DUT board. If BUILTIN_LED is connected it will blink at 0.5Hz (1 sec on, and 1 sec off) when I2C reads correctly.
 
 For reference, the RPUadpt shield address defaults to '1' and is changed with i2c-debug. The i2c-debug program reads the address during setup, so it will need a reset, remember to change the RPUftid broadcast address to '2', so the RPUadpt will reset it's MCU board.
 

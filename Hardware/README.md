@@ -51,8 +51,8 @@ The serial port is a wired connection. The hardware is raw and lacks training wh
 ![Status](./status_icon.png "RPUadpt Status")
 
 ```
-        ^6  Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
-            WIP: Evaluation.
+        ^6  Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing, Evaluation.
+            WIP: 
             Todo:  
             *during review the Design may change without changing the revision.
             add IOFF buffer between host (e.g. offboard FTDI Friend) and tranceiver like RPUpi has
@@ -62,11 +62,8 @@ The serial port is a wired connection. The hardware is raw and lacks training wh
             add a jumper to power the SPI from the controller (e.g. RPUno +5V)
             remove ADC6 connction to voltage divider of +5V pin.
 
-        ^5 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing,
-           WIP: Evaluation.
-           location: 2017-3-19 addr '1', SWallEncl /w K3^2, RPUno^9, SLP003-12U.
-           location: 2018-6-19 addr '1', ShopLamp /w RPUlux^2
-           removed from tindie
+        ^5 Done: Design, Layout, BOM, Review*, Order Boards, Assembly, Testing, Evaluation.
+           removed from tindie is used in some locations.
 ```
 
 Debugging and fixing problems i.e. [Schooling](./Schooling/)
