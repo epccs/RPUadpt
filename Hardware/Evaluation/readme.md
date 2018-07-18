@@ -22,11 +22,11 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 ## ^6 SPI Checked With Raspberry Pi
 
-The unit under test is at address '1'. So first I need to bootload its local RPU (a junk RPUno^8) with [SpiSlv].
+The unit under test is at address '1'. So first I need to bootload its RPU controller (an RPUno^8) with [SpiSlv].
 
 [SpiSlv]:https://github.com/epccs/RPUno/tree/master/SpiSlv
 
-Set the booload address on what ever shield is connected to the host that will build [SpiSlv] and upload it. Guess I will just use the new I2C1 interface to do this.
+To do that I set the booload address on the shield that is connected to the host which will build [SpiSlv] and upload the firmware. Guess I will just use the new I2C1 interface to do this.
 
 ``` 
 # first set user premision to use the SPI port
@@ -38,11 +38,11 @@ bus = smbus.SMBus(1)
 bus.write_i2c_block_data(42, 0, [0])
 chr(bus.read_i2c_block_data(42,0, 2)[1])
 '1'
-# with command 0 on I2C1 the local address is was seen as ascii '1' or 49
+# with command 0 on I2C1 the local address is showed as ascii '1' or 49
 bus.write_i2c_block_data(42, 2, [0])
 chr(bus.read_i2c_block_data(42,0, 2)[1])
 '0'
-# command 2 showed the bootload address which was '0'
+# command 2 on I2C1 showed the bootload address which was '0'
 # which will be canged to '1' with command 3
 bus.write_i2c_block_data(42, 3, [49])
 chr(bus.read_i2c_block_data(42,0, 2)[1])
