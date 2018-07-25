@@ -7,6 +7,7 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 # Table Of Contents:
 
+1. [^6 Serial Checked With USBuart](#6-serial-checked-with-usbuart)
 1. [^6 SPI Checked With Raspberry Pi](#6-spi-checked-with-raspberry-pi)
 1. [^6 Serial Checked With Raspberry Pi](#6-serial-checked-with-raspberry-pi)
 1. [^6 I2C1 Checked With Raspberry Pi](#6-i2c1-checked-with-raspberry-pi)
@@ -19,6 +20,15 @@ This shows the setup and method used for evaluation of RPUadpt.
 1. [^1 Mounts on Irrigate7](#1-mounts-on-irrigate7)
 1. [^1 Mounts on Uno](#1-mounts-on-uno)
 1. [^1 ICSP With Dragon](#1-icsp-with-dragon)
+
+## ^6 Serial Checked With USBuart
+
+USBuart^0 does not turn off the current source used to drive the buffer on RPUadpt so it will need an update, but it works othwise.
+
+![^6_with_fwRemote_USBuart^0i](./RPUadpt^6_with_fwRemote_USBuart^0.jpg "^6 fwRemote with USBuart")
+
+When I turn off power to the computer connected to USBuart^0 the test bench computer using RPUftdi^4 is able to connect and use the serial bus (including accessing the powered RPU controler under the unpowerd USBuart^0+RPUadpt^6). The computer on RPUftdi^4 can not be turned off without also turning off its RPU controller. The previous version of RPUadpt^5 would lock the serial bus when power to the USBuart is lost.
+
 
 ## ^6 SPI Checked With Raspberry Pi
 
