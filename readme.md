@@ -26,7 +26,7 @@ I2C between the manager and the controller allows its program to read an address
 
 ## Status
 
-Available through [Tindie](https://www.tindie.com/products/8833/)
+[Available](https://rpubus.org/Order_Form.html)
 
 ![Status](./Hardware/status_icon.png "Status")
 
