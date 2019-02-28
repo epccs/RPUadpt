@@ -25,7 +25,7 @@ This shows the setup and method used for evaluation of RPUadpt.
 
 USBuart^0 does not turn off the current source used to drive the buffer on RPUadpt so it will need an update, but it works othwise.
 
-![^6_with_fwRemote_USBuart^0i](./RPUadpt^6_with_fwRemote_USBuart^0.jpg "^6 fwRemote with USBuart")
+![RPUadp^6_with_fwRemote_USBuart^0i](./RPUadpt^6_with_fwRemote_USBuart^0.jpg "RPUadp^6 fwRemote with USBuart")
 
 When I turn off power to the computer connected to USBuart^0 the test bench computer using RPUftdi^4 is able to connect and use the serial bus (including accessing the powered RPU controler under the unpowerd USBuart^0+RPUadpt^6). The computer on RPUftdi^4 can not be turned off without also turning off its RPU controller. The previous version of RPUadpt^5 would lock the serial bus when power to the USBuart is lost.
 
@@ -113,7 +113,7 @@ AD F0
 
 The maximum speed seen is 500kHz. Adding 3k Ohm pullup on R32, R34, and R37 should allow higher speed.
 
-![^6_fwRemote_RPU_fwSpiSlv_Rpi](./RPUadpt^6_fwRemote_RPUno^8_fwSpiSlv_RaspberryPi.jpg "^6 fwRemote RPU fwSpiSlv and Rpi")
+![RPUadp^6_fwRemote_RPU_fwSpiSlv_Rpi](./RPUadpt^6_fwRemote_RPUno^8_fwSpiSlv_RaspberryPi.jpg "RPUadp^6 fwRemote RPU fwSpiSlv and Rpi")
 
 
 ## ^6 Serial Checked With Raspberry Pi
@@ -144,7 +144,7 @@ Once the host lockout is clear the Raspberry Pi can bootload the address set wit
 
 [RTS]: https://github.com/epccs/RPUpi/tree/master/RPiRtsCts
 
-![^6 fwRemote_and_Rpi](./RPUadpt^6_with_fwRemote_RaspberryPi.jpg "^6 fw Remote and Rpi")
+![RPUadp^6 fwRemote_and_Rpi](./RPUadpt^6_with_fwRemote_RaspberryPi.jpg "RPUadp^6 fw Remote and Rpi")
 
 
 ## ^6 I2C1 Checked With Raspberry Pi
@@ -179,7 +179,7 @@ The bare metal should have returned [0, 0xFC] so what has gone wrong? Well, noth
 
 So to sum it up, there seem to be two receive events and one transmit event when the Raspberry Pi does a write_i2c_block and a read_i2c_block.
 
-![^6 I2C1_Checked_With_SMBus](./RPUadpt^6_with_fwBlinkLED_RaspberryPi_with_SMBus.jpg "^6 I2C1 Checked With SMBus")
+![RPUadp^6 I2C1_Checked_With_SMBus](./RPUadpt^6_with_fwBlinkLED_RaspberryPi_with_SMBus.jpg "RPUadp^6 I2C1 Checked With SMBus")
 
 
 ## ^6 I2C1 Checked With i2c-debug
@@ -217,7 +217,7 @@ blinking has stopped
 
 Note: I incuded the command byte befor reading the data because I think that is what SMBus does.
 
-![^6 I2C1_Checked_With_i2c-debug](./RPUadpt^6_with_fwBlinkLED_UnoClone_with_i2c-debug.jpg "^6 I2C1 Checked With i2c-debug")
+![RPUadp^6 I2C1_Checked_With_i2c-debug](./RPUadpt^6_with_fwBlinkLED_UnoClone_with_i2c-debug.jpg "RPUadp^6 I2C1 Checked With i2c-debug")
 
 
 ## ^6 ISCP ATmega328pb
@@ -268,7 +268,7 @@ I used an RPUftdi^4 to do a remote reset of an RPUno^6 with an RPUadpt^5 shield.
 
 [^5 Remote Reset Video](http://rpubus.org/Video/RPUno%5E6_RPUadpt%5E5_RPUftdi%5E4_K3%5E2_RemoteReset.mp4 "^5 Remote Reset Video")
 
-![^5 Remote Reset](./RPUadpt^5_RPUno^6_K3^2_RPUftdi^4_RemoteReset.jpg "^5 Remote Reset")
+![RPUadp^5 Remote Reset](./RPUadpt^5_RPUno^6_K3^2_RPUftdi^4_RemoteReset.jpg "^5 Remote Reset")
 
 After the reset, the bootloader runs for a few seconds and then passes control to the [Solenoid] firmware which reads an address from the RPUadpt shield over I2C and cycles through each latching coil to place them in a known state. Reading the address from RPUadpt also lets the bus manager on that board broadcast a byte on the RS-485 bus management pair (DTR) that ends the lockout placed on other devices to allow a point to point bootload connection (i.e. a return to normal point to multipoint mode).
 

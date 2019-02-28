@@ -61,7 +61,7 @@ Apply a 5V source set with a 30mA current limit to the +5V header pin. Check tha
 Install Git and AVR toolchain on Ubuntu (I use 18.04). 
 
 ```
-sudo apt-get install git gcc-avr binutils-avr gdb-avr avr-libc avrdude
+sudo apt-get install git make gcc-avr binutils-avr gdb-avr avr-libc avrdude
 ```
 
 Clone the RPUadpt repository where you want.
