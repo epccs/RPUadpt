@@ -4,18 +4,96 @@ Some lessons I learned doing RPUadpt.
 
 # Table Of Contents:
 
-12. [^5 RJ45 Termination](#4-rj45-termination)
-11. [^4 Bus Manager ICP1 Used to Hault Host](#4-bus-nanager-icp1-used-to-hault-host)
-10. [^3 Cut VIN for RPUno^4](#3-cut-vin-for-rpuno4)
-9. [^3 Pull-up HOST_TX](#3-pull-up-host_tx)
-8. [^2 ATtiny1634 USI as I2C Slave](#2-attiny1634-usi-as-i2c-slave)
-7. [^2 ATtiny1634 PB3 Does Not Work As Input](#2-attiny1634-pb3-does-not-work-as-input)
-6. [^2 Jumper 5V as default](#2-jumper-5v-as-default)
-5. [^1 Damaged Transceivers](#1-damaged-transceivers)
-4. [^1 Testpoints Missing](#1-testpoints-missing)
-3. [^1 FT231X Pitch](#1-ft231x-pitch)
-2. [^1 ATtiny1634 !RESET 10k Pullup](#1-attiny1634-reset-10k-pullup)
-1. [^0 MCU RX not Seeing Data](#0-mcu-rx-not-seeing-data)
+1. ^6 SMBus and the AVR I2C/TWI
+1. ^6 ATmega328pb Dual I2C/TWI
+1. ^6 ATmega328pb has efuse bit 3
+1. ^6 AVR toolchain for ATmega328pb
+1. ^5 ISP based firmware Updates
+1. ^5 RJ45 Termination
+1. ^4 Bus Manager ICP1 Used to Hault Host
+1. ^3 Cut VIN for RPUno^4
+1. ^3 Pull-up HOST_TX
+1. ^2 ATtiny1634 USI as I2C Slave
+1. ^2 ATtiny1634 PB3 Does Not Work As Input
+1. ^2 Jumper 5V as default
+1. ^1 Damaged Transceivers
+1. ^1 Testpoints Missing
+1. ^1 FT231X Pitch](#1-ft231x-pitch)
+1. ^1 ATtiny1634 !RESET 10k Pullup
+1. ^0 MCU RX not Seeing Data
+
+
+## ^6 SMBus and the AVR I2C/TWI
+
+My goal has been to use the ATmega328pb second I2C1 port as a slave for a Raspberry Pi while the first port I2C0 does that for other boards. That way I can power down the Raspberry Pi without locking up the other boards.
+
+I find that the Raspberry Pi I2C port works with SMBus. So to experiment I have the 328pb second I2C1 port connected to a Raspberry Pi, but the data echo I got back was [0, 0xFF]. The bare metal should have returned [0, 0xFC] so what has gone wrong? Well, it actually turns out nothing. I sent the bare metal [0, 0x03] and the 328pb inverted the bits of the second byte for the echo so I would know it had done something to that byte but the SMBus read did not take place after a repeated start as I have been doing with I2C. The SMBus has some tricks that are differnt than how I have been using the I2C bus. The SMBus block read function is a second I2C transaction that runs the twi received event a second time after the block write transaction. I want to echo the data from the first transaction, so I needed to preserve that old data from the first I2C transaction when the event for receiving the second transaction data occurs. Finally when the second transaction causes a transmit event I need to pass the old data from the first receiving event. I think that is confusing but it seems to be working so I did my best to put what I found in words.
+
+The 328pb bare metal code.
+
+https://github.com/epccs/RPUadpt/tree/master/BlinkLED
+
+The Python running on Raspberry Pi
+
+https://github.com/epccs/RPUadpt/blob/master/BlinkLED/toggle.py
+
+The Raspberry Pi setup I was using
+
+https://github.com/epccs/RPUpi/blob/master/Hardware/Testing/linux.md
+
+
+## ^6 ATmega328pb Dual I2C/TWI
+
+I made two copies of the twi.c that I have been using and fixed all the registers to work with each of the two ports. The one issue was what to do with the switch statement for the I2C ISR
+
+```C
+switch(TW_STATUS)
+```
+
+TW_STATUS is defined in avr-libc files (#include <util/twi.h>) so I looked at what Hans did, and that made sense. So boilerplate and thanks to MCUdude.
+
+https://github.com/MCUdude/MiniCore/tree/master/avr/libraries/Wire1/src/utility
+
+
+## ^6 ATmega328pb has efuse bit 3
+
+The bit is for clock failure detection which I am not going to use on this project. Unfortunately one of the parts I got from Digikey had the fuse set so avrdude needs told to input it during writing so it can be cleared.
+
+https://github.com/epccs/RPUadpt/blob/master/lib/avrdude/328pb.conf
+
+I let Hans know of the issue for MiniCore so he could decide if he wanted to include it.
+
+https://github.com/MCUdude/MiniCore/issues/61
+
+I also registered at savannah.nongnu.org to submit a patch. I used facchinm/avrdude Github repo to base the patch, and TortoiseGit has a diff tool that can make the patch from a Git repo.
+
+https://savannah.nongnu.org/patch/index.php?9811
+
+
+## ^6 AVR toolchain for ATmega328pb
+
+The 5.4.0 version of avr-gcc supports Directory Search options.
+
+https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options
+
+The ones I will use are the -B option which adds some pre-compiled binaries from Atmel's atpack. and the -I option which adds the header. The way I will use them can be seen in this MakeFile.
+
+https://github.com/epccs/RPUadpt/blob/master/BlinkLED/Makefile
+
+The uploader tool (avrdude) also needs a small patch, which can be appended to the systems /etc/avrdude.config with its -C option (also seen in the above Makefile).
+
+On Jun 12, 2018 I verified that Atmel's atpack does not work with on Raspian stretch which has avr-gcc (GCC) 4.9.2
+
+However around July 1, 2018 Raspian (stretch) has pulled the AVR toolchain from Debian sid and it now has gcc version 5.4.0 (GCC) whic does work with the atpack.
+
+
+## ^5 ISP based firmware Updates
+
+The shield is programmed with an ICSP tool. Normally I used an Arduino Uno with the [ArduinoISP] sketch from the IDE's examples. An Uno runs at 5V so I also used an SPI level shifter to program the 3.3V RPUadpt bus manager. I have a board for this, it is called [ICSP] and allows an R-Pi Zero to work as a ICSP tool host and includes SPI level shifter (and IOFF buffer).
+
+[ArduinoISP]: https://github.com/arduino/Arduino/blob/master/build/shared/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino
+[ICSP]: https://github.com/epccs/Driver/tree/master/ICSP
+
 
 ## ^5 RJ45 Termination
 
